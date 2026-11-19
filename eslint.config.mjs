@@ -9,6 +9,7 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    "extension/**",
     "out/**",
     "build/**",
     // dist/ 是 build-sites-static 的产物,里面是压缩过的 chunk,

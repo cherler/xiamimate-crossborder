@@ -1,0 +1,96 @@
+/* 取自网站的色板(app/globals.css):主色 #0c9488,墨色 rgba(28,45,66) */
+:root {
+  --ink: #1c2d42;
+  --ink-soft: #5b6b7f;
+  --accent: #0c9488;
+  --surface: #f6f8fb;
+  --border: #e2e6ec;
+  --warn: #b4690e;
+  --good: #0c7a52;
+}
+* { box-sizing: border-box; }
+body {
+  width: 360px; margin: 0; color: var(--ink); background: #fff;
+  font: 13px/1.55 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+.bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+}
+.logo { font-weight: 600; letter-spacing: .01em; }
+main { padding: 14px; }
+
+h2 { margin: 0 0 6px; font-size: 14px; }
+p { margin: 0 0 10px; color: var(--ink-soft); }
+p.tight { margin-bottom: 6px; }
+
+button {
+  font: inherit; cursor: pointer; border-radius: 8px; border: 1px solid transparent;
+  padding: 9px 14px; width: 100%;
+}
+button.primary { background: var(--accent); color: #fff; font-weight: 600; }
+button.primary:hover:not(:disabled) { filter: brightness(1.06); }
+button.ghost { background: #fff; border-color: var(--border); color: var(--ink); margin-top: 8px; }
+button.ghost:hover:not(:disabled) { background: var(--surface); }
+button:disabled { opacity: .55; cursor: default; }
+button.link {
+  width: auto; padding: 2px 4px; background: none; color: var(--ink-soft);
+  font-size: 12px; text-decoration: underline;
+}
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.title { font-weight: 600; line-height: 1.4; margin-bottom: 6px; word-break: break-word; }
+
+dl { display: grid; grid-template-columns: 64px 1fr; gap: 4px 10px; margin: 0; font-size: 12px; }
+dt { color: var(--ink-soft); }
+dd { margin: 0; word-break: break-word; }
+dd.missing { color: var(--warn); }
+
+ul.notes { list-style: none; padding: 0; margin: 10px 0 0; font-size: 12px; }
+ul.notes li { padding: 5px 0 5px 16px; position: relative; color: var(--ink-soft); }
+ul.notes li::before { content: "•"; position: absolute; left: 4px; }
+li.good { color: var(--good); } li.good::before { color: var(--good); }
+li.warn { color: var(--warn); } li.warn::before { color: var(--warn); }
+
+.msg { padding: 9px 11px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; }
+.msg.err { background: #fdf0ee; color: #a33a28; }
+.msg.ok { background: #eaf6f2; color: var(--good); }
+
+.foot { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
+        font-size: 11px; color: var(--ink-soft); }
+.spin { display: inline-block; width: 12px; height: 12px; margin-right: 6px; vertical-align: -1px;
+        border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%;
+        animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 评论采集区:累积式,和商品采集的一次性不同,所以要一直显示进度 */
+.sep { height: 1px; background: var(--border); margin: 14px 0 12px; }
+.cart {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 11px; margin: 10px 0;
+}
+.cart-n { font-weight: 600; font-size: 13px; }
+.cart-hint { font-size: 11px; color: var(--ink-soft); margin-top: 3px; line-height: 1.5; }
+button.link.wide { width: 100%; margin-top: 6px; text-align: center; }
+
+/* 星级采集:亚马逊关掉了深度翻页,按星级分层采是唯一能把样本做大的正当途径 */
+.stars { display: flex; gap: 6px; margin: 8px 0; }
+.star {
+  flex: 1; padding: 7px 4px; font-size: 12px; border-radius: 7px;
+  border: 1px solid var(--border); background: #fff; color: var(--ink);
+}
+.star:hover { background: var(--surface); }
+.star.done { background: #eaf6f2; border-color: #bfe3d5; color: var(--good); font-weight: 600; }
+
+/* 全量口碑主题:方向用颜色区分,认错方向比没有还糟 */
+.topics { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+.topic {
+  font-size: 11px; padding: 3px 8px; border-radius: 99px;
+  border: 1px solid var(--border); background: #fff; color: var(--ink-soft);
+}
+.topic.positive { background: #eaf6f2; border-color: #bfe3d5; color: var(--good); }
+.topic.negative { background: #fdf0ee; border-color: #f2cfc8; color: #a33a28; }
+.topic.mixed { background: #fdf6ea; border-color: #efdcbd; color: var(--warn); }
+
+.msg.warn { background: #fdf6ea; color: #8a5307; }
+.msg.warn button.link, .msg.err button.link { color: inherit; font-weight: 600; }

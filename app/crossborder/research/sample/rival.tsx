@@ -156,7 +156,7 @@ export function RivalSample() {
       <div className="ambient ambient-one" /><div className="ambient ambient-two" />
       <SiteHeader active="crossborder" />
       <section className="tool-page rr-page">
-        <SiteLink className="tool-breadcrumb" href="/"><ArrowLeft size={13} /> 深度研究</SiteLink>
+        <SiteLink className="tool-breadcrumb" href="/crossborder/research/"><ArrowLeft size={13} /> 深度研究</SiteLink>
 
         <div className="rr-sample-banner">
           <Info size={15} />

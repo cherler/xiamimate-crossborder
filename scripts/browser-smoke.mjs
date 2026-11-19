@@ -78,6 +78,10 @@ try {
     "crossborder/workbench/listing-doctor/",
     "crossborder/workbench/voice-insight/",
     "crossborder/workbench/service-copilot/",
+    "crossborder/research/",
+    "crossborder/research/workspace/",
+    "extension/",
+    "extension/import/",
     "crossborder/research/sample/",
     "crossborder/research/sample/?type=rival",
     "crossborder/research/sample/?type=full",
@@ -101,6 +105,9 @@ try {
         .filter((h) => !h.startsWith("/xiamimate-crossborder/")),
     );
     assert.deepEqual(wrong, [], route);
+  }
+  for (const [route, file] of [["crossborder/research/", "research-desktop.png"], ["extension/", "extension-desktop.png"]]) {
+    await go(route); await page.screenshot({ path: path.join(output, file), fullPage: true });
   }
   await go();
   await page.screenshot({
@@ -231,6 +238,10 @@ try {
     "crossborder/my/",
     "crossborder/tools/profit-calculator/",
     "crossborder/workbench/voice-insight/",
+    "crossborder/research/",
+    "crossborder/research/workspace/",
+    "extension/",
+    "extension/import/",
   ]) {
     await go(route);
     const width = await page.evaluate(() => ({
@@ -241,6 +252,9 @@ try {
       width.scroll <= width.view + 2,
       "Horizontal overflow: " + route + " " + JSON.stringify(width),
     );
+  }
+  for (const [route, file] of [["crossborder/research/", "research-mobile.png"], ["extension/", "extension-mobile.png"]]) {
+    await go(route); await page.screenshot({ path: path.join(output, file), fullPage: true });
   }
   await go();
   await page.screenshot({

@@ -1,0 +1,19 @@
+<!doctype html><html lang="en"><body>
+<!-- 亚马逊换过容器的详情页:卡片还是 data-hook="review",但外层 id 变了。
+     实测就是这种情况导致按容器 id 找的第一版直接抓空。 -->
+<h1 id="title"><span id="productTitle">BISSELL Little Green</span></h1>
+<span id="acrCustomerReviewText">94,050 ratings</span>
+<div id="some-brand-new-container-2026">
+  <h3>Top reviews from the United States</h3>
+  <div id="R7NEWLAYOUT001" data-hook="review">
+    <div class="a-profile"><span class="a-profile-name">Amy Vertacnik</span></div>
+    <a data-hook="review-title"><span>Small, Yet Mighty!</span></a>
+    <span data-hook="review-date">Reviewed in the United States on July 20, 2024</span>
+    <a data-hook="format-strip">Color: Green | Style: Little Green</a>
+    <span data-hook="avp-badge">Verified Purchase</span>
+    <span data-hook="review-body"><span>I have had 100% success cleaning up cat vomit, dog bile, and mud.</span></span>
+    <span data-hook="review-star-rating"><span class="a-icon-alt">5.0 out of 5 stars</span></span>
+  </div>
+</div>
+<input type="hidden" id="ASIN" value="B0016HF5GK">
+</body></html>

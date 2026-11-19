@@ -452,6 +452,18 @@ export function importProduct(p: Product): Product {
   return p;
 }
 
+/** Import is atomic: a quota failure leaves both the stored and in-memory archive untouched. */
+export function commitImportedProduct(p: Product): void {
+  const s = readStore();
+  const exists = s.products.some(x => x.id === p.id);
+  const next = { ...s, currentId: p.id, products: exists ? s.products.map(x => x.id === p.id ? p : x) : [...s.products, p] };
+  try { window.localStorage.setItem(KEY, JSON.stringify(next)); }
+  catch { throw new Error("浏览器空间不足或存储不可用，未导入；现有档案已保留。请先导出备份并整理空间。"); }
+  cache = next;
+  if (syncState.localFull) setSync({ localFull: false });
+  notify();
+}
+
 /** 新建一个「独立结果」(散记录)并置为当前:给了名也不算命名(named=false),留待日后收编成档案。 */
 export function createLooseProduct(name: string): Product {
   const s = readStore();

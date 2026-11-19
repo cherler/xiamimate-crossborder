@@ -1,0 +1,14 @@
+node_modules/
+dist/
+dist-release/
+*.zip
+
+# 本地开发构建(指向 localhost);dist/ 与 dist-release/ 上面已忽略
+dist-prod/
+
+# macOS 目录元数据
+.DS_Store
+
+# Chrome「保存网页,全部」会在夹具旁边生成同名 _files 目录 ——
+# 里面是几 MB 的图片与 JS,解析只读 HTML,一个字节都用不上。
+tests/fixtures/*_files/

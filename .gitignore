@@ -57,3 +57,7 @@ public/chrome/
 
 # 精灵表预览图 —— scripts/pet-sheet.mjs 的产物,看完就丢
 assets-tmp/
+
+# Built collector bundles, regenerated for every Pages build
+/extension/dist/
+/public/downloads/

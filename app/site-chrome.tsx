@@ -26,6 +26,8 @@ export function SiteHeader({ active: _active }: { active?: string }) {
       </SiteLink>
       <nav aria-label="主导航">
         <SiteLink href="/">工具</SiteLink>
+        <SiteLink href="/crossborder/research/">深度研究</SiteLink>
+        <SiteLink href="/extension/">采集助手</SiteLink>
         <SiteLink href="/crossborder/my/">
           <Package size={15} /> 我的商品
         </SiteLink>

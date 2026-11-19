@@ -7,8 +7,11 @@ import {
   DEFAULT_TOPICS,
   SAMPLE_CSV,
 } from "../../../../lib/crossborder/local-workbench";
-import { saveProductRecord } from "../../../../lib/crossborder/products";
+import { currentProduct, listProducts, saveProductRecord } from "../../../../lib/crossborder/products";
 import { downloadText } from "../../../../lib/crossborder/backup";
+import { collectedReviews } from "../../../../lib/crossborder/collector";
+import { reviewsCsv } from "../../../../shared/collector";
+import { SiteLink } from "../../../site-link";
 type Analysis = ReturnType<typeof analyseLocally>;
 export function InsightPanel() {
   const [csv, setCsv] = useState(""),
@@ -90,6 +93,12 @@ export function InsightPanel() {
             />
           </label>
           <div className="local-actions">
+            <button onClick={() => {
+              const p = currentProduct(), reviews = p ? collectedReviews(p) : [];
+              if (!reviews.length) { setMessage("当前商品没有已导入的评论，请先导入插件采集文件。"); return; }
+              setCsv(reviewsCsv(reviews)); setMessage("已读取当前商品的 " + reviews.length + " 条去重评论；仅覆盖采集页面。");
+            }}>读取当前商品的采集评论</button>
+            <SiteLink href="/extension/import/">导入采集文件</SiteLink>
             <button
               onClick={() => {
                 setCsv(SAMPLE_CSV);
@@ -109,6 +118,16 @@ export function InsightPanel() {
         </section>
         <section className="local-panel">
           <h2>竞品评论（可选）</h2>
+          <div className="local-actions"><button onClick={() => {
+            const current = currentProduct();
+            const others = listProducts().filter(p => p.id !== current?.id && collectedReviews(p).length);
+            if (!others.length) { setMessage("还没有带评论的其他商品档案，请先采集并导入竞品。"); return; }
+            const selected = window.prompt("选择竞品编号：\n" + others.map((p,i) => (i+1) + ". " + p.name + " · " + p.marketplace).join("\n"));
+            if (!selected) return;
+            const p = others[Number(selected)-1];
+            if (!p) { setMessage("编号不正确。"); return; }
+            setRival(reviewsCsv(collectedReviews(p))); setMessage("已读取竞品「" + p.name + "」的评论样本。");
+          }}>读取竞品档案的采集评论</button></div>
           <label className="local-field">
             竞品 CSV
             <textarea

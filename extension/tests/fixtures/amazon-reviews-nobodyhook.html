@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><body>
+<!-- 实测线上状态:data-hook="review" 有 13 个,data-hook="review-body" 有 0 个。
+     正文的 hook 被拿掉了,其余 hook(star-rating / date / format-strip)都还在。 -->
+<div id="reviewsMedley">
+  <div id="R5NOHOOK00001" data-hook="review">
+    <div class="a-profile"><span class="a-profile-name">Amy Vertacnik</span></div>
+    <a data-hook="review-title"><span>Small, Yet Mighty!</span></a>
+    <span data-hook="review-date">Reviewed in the United States on July 20, 2024</span>
+    <a data-hook="format-strip">Color: Green | Style: Little Green</a>
+    <span data-hook="avp-badge">Verified Purchase</span>
+    <span data-hook="review-star-rating"><span class="a-icon-alt">5.0 out of 5 stars</span></span>
+    <!-- 正文:没有任何 data-hook,只是普通 span -->
+    <div class="a-expander-content"><span>I wanted to wait to write a review until I had tested the Little Green on multiple types of stains on various fabrics and carpets, and it has not disappointed.</span></div>
+    <span data-hook="helpful-vote-statement">1,204 people found this helpful</span>
+  </div>
+</div>
+<input type="hidden" id="ASIN" value="B0016HF5GK">
+</body></html>

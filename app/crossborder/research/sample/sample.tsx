@@ -311,7 +311,7 @@ export function SampleReport() {
       <div className="ambient ambient-one" /><div className="ambient ambient-two" />
       <SiteHeader active="crossborder" />
       <section className="tool-page rr-page">
-        <SiteLink className="tool-breadcrumb" href="/"><ArrowLeft size={13} /> 深度研究</SiteLink>
+        <SiteLink className="tool-breadcrumb" href="/crossborder/research/"><ArrowLeft size={13} /> 深度研究</SiteLink>
 
         <div className="rr-sample-banner">
           <Info size={15} />
@@ -324,7 +324,7 @@ export function SampleReport() {
           <SiteLink role="tab" href="/crossborder/research/sample/?type=rival">商品与竞品对比</SiteLink>
           <SiteLink role="tab" href="/crossborder/research/sample/?type=full">商品综合研究</SiteLink>
           <SiteLink role="tab" href="/crossborder/research/sample/?type=tiktok">TikTok Shop 平台</SiteLink>
-          <span>三种深度研究骨架一致;TikTok Shop 那档额外接入平台真实评价</span>
+          <span>三种研究结构与 TikTok Shop 平台资料展示方式；本页均为演示数据</span>
         </div>
 
         {/* 品类切换:只改变风险维度、专属图、定位图的轴 —— 骨架完全一致 */}

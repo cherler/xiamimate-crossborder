@@ -10,10 +10,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ignore-pattern .next --ignore-pattern out",
-    "test": "node --import tsx --test tests/*.test.ts",
+    "test": "node --import tsx --test tests/*.test.ts && npm run test --workspace extension",
     "build:pages": "NEXT_PUBLIC_BASE_PATH=/xiamimate-crossborder NEXT_PUBLIC_SITE_ORIGIN=https://cherler.github.io next build",
     "check:static": "node scripts/check-static.mjs",
-    "test:browser": "node scripts/browser-smoke.mjs"
+    "test:browser": "node scripts/browser-smoke.mjs",
+    "build:extension": "npm run typecheck --workspace extension && npm run build --workspace extension && node scripts/package-extension.mjs",
+    "prebuild": "npm run build:extension",
+    "prebuild:pages": "npm run build:extension",
+    "predev": "npm run build:extension",
+    "test:extension:browser": "node scripts/extension-smoke.mjs"
   },
   "dependencies": {
     "geist": "^1.7.2",
@@ -43,5 +48,8 @@
     "type": "git",
     "url": "https://github.com/cherler/xiamimate-crossborder.git"
   },
-  "homepage": "https://cherler.github.io/xiamimate-crossborder/"
+  "homepage": "https://cherler.github.io/xiamimate-crossborder/",
+  "workspaces": [
+    "extension"
+  ]
 }

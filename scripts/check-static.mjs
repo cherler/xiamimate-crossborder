@@ -46,7 +46,6 @@ for (const file of html) {
 for (const route of [
   "account",
   "auth",
-  "extension",
   "crossborder/research/product-insight",
   "crossborder/report",
 ]) {

@@ -193,17 +193,7 @@ export const WORKBENCHES: Workbench[] = [
 
 /* ---------------- 深度研究 ---------------- */
 
-/**
- * 深度研究是独立于「免费计算工具」的产品层级:异步执行、消耗搜索与模型积分、
- * 消耗 AI 积分、产出一份可保存/更新/导出的报告。首页同屏曝光,但绝不能长得像
- * 第 9 个免费工具卡 —— 用户会误以为免费、即时、不需要确认。
- *
- * 用户侧命名用「口碑与需求洞察」而非「舆情分析」:卖家要的是需求、差评归因
- * 和竞品空缺,不是公关监测。「舆情」保留为内部能力词。
- *
- * 红线(与 fetch-route 的产品承诺一致):不抓平台商品页,平台评论走用户上传或扩展采集(读的是用户自己打开的那一页);
- * 报告基于公开网络样本,是「公开资料洞察」,不冒充「全量评论分析」。
- */
+/** 静态站的研究入口：报告样例与本地资料底稿；在线检索和 AI 生成尚未接入。 */
 export type ResearchProduct = {
   id: string;
   slug: string;
@@ -211,7 +201,7 @@ export type ResearchProduct = {
   short: string;
   /** 首页/落地页的一句副标题 —— 说清数据从哪来、产出是什么。 */
   subtitle: string;
-  /** 积分与形态提示,曝光位必须带上,避免被当成免费即时工具。 */
+  /** 当前页面提供的研究方式。 */
   pricingNote: string;
   status: ToolStatus;
   icon: ComponentType<{ size?: number; strokeWidth?: number }>;
@@ -224,8 +214,7 @@ export const RESEARCH_PRODUCTS: ResearchProduct[] = [
     name: "商品口碑与需求洞察",
     short: "发现用户需求、产品问题和竞争机会",
     subtitle: "基于评论、社区讨论、问答、媒体和公开网页,分析用户需求、产品问题与竞争机会。",
-    pricingNote: "AI 深度研究 · 约需数分钟 · 消耗 AI 积分",
-    // 2026-07-19 开闸:扫描/正式研究/报告页全链路已真实 E2E 验证(P0/P1 图表规范落地)。
+    pricingNote: "本地资料研究 · 报告样例",
     status: "available",
     icon: Telescope,
   },
@@ -233,10 +222,9 @@ export const RESEARCH_PRODUCTS: ResearchProduct[] = [
     id: "product-vs-rivals",
     slug: "product-vs-rivals",
     name: "商品与竞品对比",
-    short: "口碑与定位的差异矩阵(需 ≥2 个竞品)",
+    short: "并排比较商品档案和评论样本",
     subtitle: "对比各主体口碑与用户选择原因,找出未满足需求与可争夺人群 —— 定性对比,非参数横评。",
-    pricingNote: "AI 深度研究 · 约需数分钟 · 消耗 AI 积分",
-    // 2026-07-19 开闸(#CV):rival_compare 五段流水线 + 差异矩阵 + 必须输入硬门槛已落地。
+    pricingNote: "本地资料研究 · 报告样例",
     status: "available",
     icon: GitCompare,
   },
@@ -246,8 +234,7 @@ export const RESEARCH_PRODUCTS: ResearchProduct[] = [
     name: "商品综合研究",
     short: "需求、口碑、竞品与风险一次研究完",
     subtitle: "一份从需求到风险的全景报告,顶部一页决策摘要给去/留/改倾向 —— 不替你下终判。",
-    pricingNote: "AI 深度研究 · 约需数分钟 · 消耗 AI 积分",
-    // 2026-07-19 开闸(#F):full intent 全景五段 + 一页决策摘要已落地。
+    pricingNote: "本地资料研究 · 报告样例",
     status: "available",
     icon: Microscope,
   },
@@ -264,9 +251,9 @@ export function researchBySlug(slug: string): ResearchProduct | undefined {
  */
 export function researchStartPath(r: ResearchProduct): string | null {
   if (r.status !== "available") return null;
-  if (r.id === "product-vs-rivals") return "/crossborder/research/product-insight/?intent=rival_compare";
-  if (r.id === "product-full") return "/crossborder/research/product-insight/?intent=full";
-  return "/crossborder/research/product-insight/";
+  if (r.id === "product-vs-rivals") return "/crossborder/research/workspace/?type=rival";
+  if (r.id === "product-full") return "/crossborder/research/workspace/?type=full";
+  return "/crossborder/research/workspace/";
 }
 export function researchSamplePath(r: ResearchProduct): string | null {
   if (r.id === "product-vs-rivals") return "/crossborder/research/sample/?type=rival";
@@ -297,7 +284,7 @@ export function toolBySlug(slug: string): CrossborderTool | undefined {
 
 /**
  * 工具与工作台合计的状态分布。
- * 刻意不含深度研究:它是独立的积分消耗层级,首页尾注「不注册也能用」只描述免费工具,
+ * 深度研究使用独立入口，计算工具与研究资料分别统计。
  * 把 planned 的研究产品算进来会让这行话消失,误伤免费工具的承诺。
  */
 export function statusCounts(): Record<ToolStatus, number> {

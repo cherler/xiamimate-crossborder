@@ -135,6 +135,7 @@ export default function MyProducts() {
             导出全部备份
           </button>
           <button onClick={() => file.current?.click()}>导入备份</button>
+          <SiteLink href="/extension/import/">导入插件采集文件</SiteLink>
           <input
             ref={file}
             type="file"
@@ -199,6 +200,8 @@ export default function MyProducts() {
                 >
                   商品事实 / Listing
                 </button>
+                <button onClick={() => open(p, "/crossborder/research/workspace/")}>深度研究 / 资料</button>
+                <button onClick={() => open(p, "/crossborder/workbench/voice-insight/")}>评论样本分析</button>
                 <button onClick={() => rename(p)}>改名</button>
                 {products.length > 1 && (
                   <button onClick={() => merge(p)}>合并档案</button>
@@ -224,7 +227,7 @@ export default function MyProducts() {
                         onClick={() =>
                           downloadText(
                             r.tool + "-" + r.id + ".json",
-                            JSON.stringify(r, null, 2),
+                            JSON.stringify(r.tool === "capture" ? r.values.bundle : r, null, 2),
                           )
                         }
                       >

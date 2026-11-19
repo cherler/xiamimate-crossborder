@@ -1,0 +1,21 @@
+{
+  "name": "@xiamimate/collector",
+  "version": "0.3.0",
+  "private": true,
+  "description": "虾米采集助手 —— 浏览器扩展:商品信息收集、分析、导入",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "@types/node": "22.19.19",
+    "esbuild": "^0.24.0",
+    "linkedom": "^0.18.5",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

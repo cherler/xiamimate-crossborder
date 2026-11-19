@@ -18,6 +18,7 @@ import { createProductFromRef } from "../../lib/crossborder/products";
 import { parseListingRef } from "../../lib/crossborder/asin";
 import { sitePath } from "../../lib/site";
 import { HeroBubbles } from "./hero-bubbles";
+import { LOCAL_RESEARCH_TYPES } from "../../lib/crossborder/research/local";
 const WORK = [
   {
     slug: "listing-doctor",
@@ -137,6 +138,18 @@ export function CrossborderCenter() {
             </div>
           </section>
           <section className="cb-section">
+            <div className="cb-section-head"><h2>深度研究</h2><SiteLink href="/crossborder/research/">全部研究能力 →</SiteLink></div>
+            <p className="local-note">报告样例、评论证据与竞品资料。先核对来源，再整理自己的研究判断。</p>
+            <div className="tc-grid">
+              {LOCAL_RESEARCH_TYPES.filter(t => !q || ref || (t.name + t.description + "深度研究").includes(q)).map(t => (
+                <SiteLink className="tcard research-card" key={t.id} href={"/crossborder/research/workspace/?type=" + t.id}>
+                  <div className="tc-head"><span className="tc-icon"><Search size={19} /></span><span className="tc-title"><b>{t.name}</b><span>本地资料研究 · 完整报告样例</span></span></div>
+                  <p>{t.description}</p><span className="tc-go">进入研究 →</span>
+                </SiteLink>
+              ))}
+            </div>
+          </section>
+          <section className="cb-section">
             <div className="cb-section-head">
               <h2>跨境工作台</h2>
               <small>本地处理 · 可核对，可保存</small>
@@ -162,7 +175,7 @@ export function CrossborderCenter() {
                 </SiteLink>
               ))}
             </div>
-            {q && !tools.length && !work.length && (
+            {q && !tools.length && !work.length && !LOCAL_RESEARCH_TYPES.some(t => (t.name + t.description + "深度研究").includes(q)) && (
               <p className="cb-empty">
                 没有匹配的工具，试试「利润」「广告」「评论」或「客服」。
               </p>
@@ -170,6 +183,11 @@ export function CrossborderCenter() {
           </section>
         </div>
         <aside className="cb-rail">
+          <div className="rr-card">
+            <div className="rr-h"><Package size={15} /> 浏览器采集助手</div>
+            <p className="rr-pitch">把 Amazon、TikTok Shop 的商品与评论样本带回本地，接着做分析和研究。</p>
+            <SiteLink className="rr-cta" href="/extension/">下载插件 / 导入资料 →</SiteLink>
+          </div>
           <div className="rr-card">
             <div className="rr-h">
               <Package size={15} /> 我的商品

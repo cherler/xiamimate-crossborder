@@ -5,8 +5,6 @@
 **在线使用：[GitHub Pages](https://cherler.github.io/xiamimate-crossborder/)**
 **源码：[cherler/xiamimate-crossborder](https://github.com/cherler/xiamimate-crossborder)**
 
-本仓由 `xiami-crossborder` 更名而来，保留原有提交历史。它是独立的跨境工具项目，与 `xiamimate-tools-frontend` 分别维护。
-
 ## 功能
 
 | 功能 | 用途 |
@@ -21,9 +19,31 @@
 | 评论与竞品样本分析 | CSV 导入、可编辑关键词主题、样本统计、原文和竞品对比 |
 | 客服回复工作台 | 中英文售后模板、编辑、脱敏和常见风险表达检查 |
 | 我的商品 | 建档、改名、竞品记录、合并、测算历史、备份导出与恢复 |
-| 学习资料 | 跨境词典、入门教程、四类研究报告样例 |
+| 深度研究 | 口碑与需求、竞品对比、综合研究；报告样例、资料整理、底稿保存与导出 |
+| 浏览器采集助手 | Amazon、TikTok Shop 当前页采集；商品、评论样本与平台摘要导入 |
+| 学习资料 | 跨境词典、入门教程 |
 
 五个计算器沿用原项目的确定性计算引擎。评论分析使用明确可编辑的关键词规则，客服工作台使用场景模板，Listing 由用户录入和核对事实；这些功能不调用大模型，也不代替平台审核。研究报告样例明确标注为演示资料，不代表实时研究结果。
+
+## 浏览器采集助手
+
+[下载与安装](https://cherler.github.io/xiamimate-crossborder/extension/) · [导入采集文件](https://cherler.github.io/xiamimate-crossborder/extension/import/) · [插件源码](./extension/)
+
+下载 ZIP 并解压，在 Chrome / Edge 的扩展管理页启用开发者模式，加载含 `manifest.json` 的目录。点击插件采集当前商品页，导出 JSON，再到网站核对并确认导入。
+
+- 同商品、同站点合并档案；重复导入同一份文件不会增加记录。
+- 采集资料与经营测算分开，观察价格不会覆盖用户填写的成本与售价。
+- 评论保留来源页、采集时间、排序和筛选信息；平台摘要单独标注。
+- 插件不自动翻页、后台采集或上传数据，导出后仍保留本地采集结果。
+- 手动安装的版本需手动更新，详见 [插件说明](./extension/README.md)。
+
+## 深度研究
+
+[研究首页](https://cherler.github.io/xiamimate-crossborder/crossborder/research/) 提供三类研究入口和四种完整报告样例。
+
+当前可用：整理插件采集资料、查看去重评论、按关键词统计主题、对比商品档案、补充来源与判断、保存和导出研究底稿。底稿是本地固定结构整理，判断由用户填写。
+
+原版的商品识别、公开网页扫描、联网检索、AI 报告生成和任务续跑依赖在线服务，当前 GitHub Pages 站点尚未接入。演示报告、本地底稿与自动研究的边界会在页面分别说明。
 
 ## 数据保存
 
@@ -49,10 +69,11 @@ npm run lint
 
 ## GitHub Pages 部署
 
-推送 `main` 后，GitHub Actions 会运行测试、构建、静态链接检查和浏览器验证，再发布 `out/`。
+推送 `main` 后，GitHub Actions 会运行网站与插件测试，重新构建插件 ZIP、网站和静态链接检查，再通过浏览器验证后发布 `out/`。
 
 ```bash
-npm run build:pages
+npm run build:extension  # 单独构建插件与下载包
+npm run build:pages      # 同时构建插件和网站
 npm run check:static
 npm run test:browser
 node scripts/serve-static.mjs
@@ -60,6 +81,7 @@ node scripts/serve-static.mjs
 ```
 
 浏览器验证使用本机 Chrome；可设置 `CHROME_PATH`。Actions 使用 Ubuntu 自带 Chrome。
+`npm run test:extension:browser` 会安装下载包，并使用页面夹具验证采集、导入和研究流程；真实商店页面改版仍可能影响解析。
 Pages 发布来源选择 GitHub Actions。仓库名改动时，请同时更新构建路径、工作流及站点链接。
 
 ## 其他入口
