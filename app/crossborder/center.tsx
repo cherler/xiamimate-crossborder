@@ -1,12 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
   FileText,
   Gauge,
+  ImagePlus,
   Package,
+  Puzzle,
   Search,
+  Telescope,
+  X,
 } from "lucide-react";
 import { SiteFooter, SiteHeader } from "../site-chrome";
 import { SiteLink } from "../site-link";
@@ -39,8 +43,56 @@ const WORK = [
     short: "按售后场景准备中英文回复，检查常见风险表述。",
   },
 ];
+
+function ResearchRail() {
+  const descriptions = {
+    voice: "整理评论样本中的需求与问题",
+    rival: "对比商品资料与评论主题",
+    full: "汇总口碑、竞品与经营假设",
+  };
+  return (
+    <section className="rr-card" aria-labelledby="research-rail-title">
+      <h2 className="rr-h" id="research-rail-title">
+        <Telescope size={13} /> 深度研究
+      </h2>
+      <p className="rr-pitch">
+        整理采集的商品、评论与补充资料，保留来源，形成研究底稿。自动联网与 AI 生成尚未接入。
+      </p>
+      {LOCAL_RESEARCH_TYPES.map((r, i) => (
+        <div className="rr-tier" key={r.id}>
+          <span className="rr-num">{i + 1}</span>
+          <div className="rr-tinfo">
+            <div className="rr-tn">{r.name}</div>
+            <div className="rr-td">{descriptions[r.id]}</div>
+          </div>
+          <div className="rr-acts">
+            <SiteLink
+              className="rr-go"
+              href={"/crossborder/research/workspace/?type=" + r.id}
+              aria-label={"开始整理：" + r.name}
+            >
+              开始 →
+            </SiteLink>
+            <SiteLink
+              className="rr-sample"
+              href={"/crossborder/research/sample/" + r.sample}
+              aria-label={"查看样例：" + r.name}
+            >
+              样例
+            </SiteLink>
+          </div>
+        </div>
+      ))}
+      <SiteLink className="rr-cta" href="/crossborder/research/">
+        了解深度研究 →
+      </SiteLink>
+    </section>
+  );
+}
+
 export function CrossborderCenter() {
   const [query, setQuery] = useState("");
+  const importHelp = useRef<HTMLDialogElement>(null);
   const q = query.trim().toLowerCase();
   const ref = parseListingRef(query.trim());
   const tools = CROSSBORDER_TOOLS.filter(
@@ -94,9 +146,25 @@ export function CrossborderCenter() {
             {ref ? "建档 →" : "搜索"}
           </button>
         </div>
-        <p className="cb-tally">
-          填入实际参数 → 查看计算依据 → 保存商品档案 → 导出备份
-        </p>
+        <div className="cb-flow" aria-label="每个工具怎么用">
+          <button
+            type="button"
+            className="cb-flow-shot"
+            aria-haspopup="dialog"
+            onClick={() => importHelp.current?.showModal()}
+          >
+            <ImagePlus size={12} /> 有截图 / 表格？上传交给 AI 读取 →
+            <small className="cb-flow-status">未接入</small>
+          </button>
+          <span className="cb-flow-div" aria-hidden="true" />
+          <span className="cb-fs"><b>料</b> 贴报价 / 截图</span>
+          <span className="cb-ar" aria-hidden="true">→</span>
+          <span className="cb-fs"><b>AI 读取</b> 带原文</span>
+          <span className="cb-ar" aria-hidden="true">→</span>
+          <span className="cb-fs"><b>你确认</b> 未确认不进</span>
+          <span className="cb-ar" aria-hidden="true">→</span>
+          <span className="cb-fs"><b>固定公式算</b> 可核对</span>
+        </div>
       </section>
       <div className="cb-board">
         <div className="cb-main">
@@ -138,18 +206,6 @@ export function CrossborderCenter() {
             </div>
           </section>
           <section className="cb-section">
-            <div className="cb-section-head"><h2>深度研究</h2><SiteLink href="/crossborder/research/">全部研究能力 →</SiteLink></div>
-            <p className="local-note">报告样例、评论证据与竞品资料。先核对来源，再整理自己的研究判断。</p>
-            <div className="tc-grid">
-              {LOCAL_RESEARCH_TYPES.filter(t => !q || ref || (t.name + t.description + "深度研究").includes(q)).map(t => (
-                <SiteLink className="tcard research-card" key={t.id} href={"/crossborder/research/workspace/?type=" + t.id}>
-                  <div className="tc-head"><span className="tc-icon"><Search size={19} /></span><span className="tc-title"><b>{t.name}</b><span>本地资料研究 · 完整报告样例</span></span></div>
-                  <p>{t.description}</p><span className="tc-go">进入研究 →</span>
-                </SiteLink>
-              ))}
-            </div>
-          </section>
-          <section className="cb-section">
             <div className="cb-section-head">
               <h2>跨境工作台</h2>
               <small>本地处理 · 可核对，可保存</small>
@@ -183,10 +239,23 @@ export function CrossborderCenter() {
           </section>
         </div>
         <aside className="cb-rail">
-          <div className="rr-card">
-            <div className="rr-h"><Package size={15} /> 浏览器采集助手</div>
-            <p className="rr-pitch">把 Amazon、TikTok Shop 的商品与评论样本带回本地，接着做分析和研究。</p>
-            <SiteLink className="rr-cta" href="/extension/">下载插件 / 导入资料 →</SiteLink>
+          <ResearchRail />
+          <div className="cb-rail-panel basics-rail">
+            <div className="rail-head">
+              <h3>浏览器扩展</h3>
+              <small>商品与评论采集</small>
+            </div>
+            <SiteLink className="basics-item" href="/extension/">
+              <Puzzle size={15} />
+              <div>
+                <b>虾米跨境采集助手</b>
+                <span>把 Amazon、TikTok Shop 的商品与评论样本带回本地，接着做分析和研究。</span>
+              </div>
+            </SiteLink>
+            <SiteLink className="basics-item" href="/extension/import/">
+              <FileText size={15} />
+              <div><b>导入采集文件 →</b></div>
+            </SiteLink>
           </div>
           <div className="rr-card">
             <div className="rr-h">
@@ -230,6 +299,20 @@ export function CrossborderCenter() {
           </div>
         </aside>
       </div>
+      <dialog ref={importHelp} className="home-import-dialog" aria-labelledby="home-import-title">
+        <div className="home-import-head">
+          <h2 id="home-import-title">商品资料导入</h2>
+          <button type="button" aria-label="关闭资料导入说明" onClick={() => importHelp.current?.close()}>
+            <X size={18} />
+          </button>
+        </div>
+        <p className="local-note">截图与报价的 AI 读取尚未接入。当前可以导入评论表格、插件采集文件，或手动核对报价后填入计算器。</p>
+        <div className="local-actions">
+          <SiteLink href="/crossborder/workbench/voice-insight/">上传评论 CSV</SiteLink>
+          <SiteLink href="/extension/import/">导入插件采集文件</SiteLink>
+          <SiteLink href="/crossborder/tools/profit-calculator/">手动填写报价参数</SiteLink>
+        </div>
+      </dialog>
       <SiteFooter />
     </main>
   );
