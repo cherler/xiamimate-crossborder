@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../site-link";
+
 
 /**
  * 综合测算(#62)—— 跨工具编排的第一形态。
@@ -139,7 +141,7 @@ export function AssessPanel() {
       <div className="ambient ambient-one" /><div className="ambient ambient-two" />
       <SiteHeader active="crossborder" />
       <section className="tool-page deepr-page">
-        <a className="tool-breadcrumb" href="/crossborder"><ArrowLeft size={13} /> 虾米跨境</a>
+        <SiteLink className="tool-breadcrumb" href="/crossborder"><ArrowLeft size={13} /> 虾米跨境</SiteLink>
         <div className="tool-page-head">
           <div className="tool-page-title">
             <span className="tool-page-icon"><Gauge size={22} /></span>
@@ -152,7 +154,7 @@ export function AssessPanel() {
           <div className="my-empty">
             <b>这个商品还没有可判的账</b>
             <p>先去利润计算器把基础参数填了 —— 综合测算吃的是同一份商品档案。</p>
-            <a className="primary-cta" href="/crossborder/tools/profit-calculator">去填参数</a>
+            <SiteLink className="primary-cta" href="/crossborder/tools/profit-calculator">去填参数</SiteLink>
           </div>
         ) : (
           <>
@@ -185,7 +187,7 @@ export function AssessPanel() {
                   {r.done ? <CheckCircle2 size={15} /> : <CircleDashed size={15} />}
                   <div className="ass-copy"><b>{r.name}</b><span>{r.note}</span></div>
                   <span className="ass-num">{r.num}</span>
-                  <a className="ass-go" href={r.href}>{r.link} <ArrowRight size={12} /></a>
+                  <SiteLink className="ass-go" href={r.href}>{r.link} <ArrowRight size={12} /></SiteLink>
                 </div>
               ))}
             </div>

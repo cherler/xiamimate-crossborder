@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../site-link";
+
 
 /**
  * 《跨境电商新手入门指南(2026 版)》—— 免费全文页。
@@ -49,7 +51,7 @@ function Chapter({ ch }: { ch: GuideChapter }) {
       {ch.tools && ch.tools.length > 0 && (
         <div className="gd-tools">
           <span>把这章的账自己算一遍:</span>
-          {ch.tools.map((t) => <a key={t.href} href={t.href}>{t.name}</a>)}
+          {ch.tools.map((t) => <SiteLink key={t.href} href={t.href}>{t.name}</SiteLink>)}
         </div>
       )}
     </section>
@@ -62,7 +64,7 @@ export function GuideView() {
       <div className="ambient ambient-one" /><div className="ambient ambient-two" />
       <SiteHeader active="crossborder" />
       <section className="tool-page gd-page">
-        <a className="tool-breadcrumb" href="/crossborder"><ArrowLeft size={13} /> 虾米跨境</a>
+        <SiteLink className="tool-breadcrumb" href="/crossborder"><ArrowLeft size={13} /> 虾米跨境</SiteLink>
 
         <header className="gd-hero">
           <span className="gd-kicker"><BookOpenCheck size={13} /> XIAMI CROSS-BORDER · GUIDE 2026</span>
@@ -85,7 +87,7 @@ export function GuideView() {
               <ol>
                 {p.chapters.map((ch) => (
                   <li key={ch.slug} className={ch.hot ? "hot" : undefined}>
-                    <a href={`#${ch.slug}`}><span>{ch.no}</span>{ch.title}</a>
+                    <SiteLink href={`#${ch.slug}`}><span>{ch.no}</span>{ch.title}</SiteLink>
                   </li>
                 ))}
               </ol>
@@ -98,7 +100,7 @@ export function GuideView() {
           <span>D1–30 认知与选定组合</span>
           <span>D31–60 商品验证与打样</span>
           <span>D61–90 小批量上线与复盘</span>
-          <a href="#90-days">看第 15 章 →</a>
+          <SiteLink href="#90-days">看第 15 章 →</SiteLink>
         </div>
 
         {GUIDE_PARTS.map((p) => (
@@ -110,9 +112,9 @@ export function GuideView() {
 
         <footer className="gd-foot">
           <p>全文免费开放 · 共 {GUIDE_CHAPTER_COUNT} 章 + 附录 · 校订 {GUIDE_META.revised}。
-          登录后可把教程里的测算存成你的商品档案,换设备接着算。</p>
+          可把教程里的测算存成商品档案，导出备份后在其他设备导入继续使用。</p>
           <p className="gd-motto">先把一件事算清楚,再把一件事做完整。</p>
-          <a className="gd-top" href="#"><ArrowUp size={13} /> 回到目录</a>
+          <SiteLink className="gd-top" href="#"><ArrowUp size={13} /> 回到目录</SiteLink>
         </footer>
       </section>
       <SiteFooter />

@@ -8,7 +8,7 @@
 
 import { useEffect, useReducer, useState } from "react";
 import { Bookmark, Check, Copy, Link2, X } from "lucide-react";
-import { useAuth } from "../../../lib/auth";
+import { sitePath } from "../../../lib/site";
 import { track } from "../../../lib/usage";
 import { markToolUsed } from "../../../lib/crossborder/recent-tools";
 import {
@@ -25,16 +25,21 @@ function encodeValues(values: ToolValues): string {
   return encodeURIComponent(JSON.stringify(values));
 }
 export function decodeValues(raw: string): ToolValues | null {
-  try {
-    const obj = JSON.parse(decodeURIComponent(raw));
-    return obj && typeof obj === "object" ? obj as ToolValues : null;
-  } catch {
-    return null;
+  // URLSearchParams already decoded the current format. Retain old encoded links.
+  for (const decode of [() => raw, () => decodeURIComponent(raw)]) {
+    try {
+      const obj = JSON.parse(decode());
+      if (obj && typeof obj === "object" && !Array.isArray(obj) &&
+          Object.values(obj).every(v => typeof v === "string" || (typeof v === "number" && Number.isFinite(v)))) {
+        return obj as ToolValues;
+      }
+    } catch { /* try legacy encoding */ }
   }
+  return null;
 }
 export function buildShareUrl(slug: string, values: ToolValues): string {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
-  return `${origin}/crossborder/tools/${slug}?s=${encodeValues(values)}`;
+  return `${origin}${sitePath("/crossborder/tools/" + slug)}?s=${encodeValues(values)}`;
 }
 
 /** 挂载时读取 URL 里的 ?s= 并回填（客户端）。 */
@@ -56,7 +61,6 @@ export type HistItem = { ts: number; values: ToolValues; label: string; id?: str
  * 挂载时顺带上报一次工具打开(用量统计)。
  */
 export function useToolHistory(toolId: string) {
-  const { user } = useAuth();
   const [, force] = useReducer((x: number) => x + 1, 0);
   const [hydrated, setHydrated] = useState(false);
 
@@ -91,7 +95,7 @@ export function useToolHistory(toolId: string) {
     if (isCloudEnabled()) schedulePush();
   }
 
-  return { items, save, clear, isCloud: !!user, productName: cur?.name?.trim() || "未命名商品" };
+  return { items, save, clear, isCloud: false, productName: cur?.name?.trim() || "未命名商品" };
 }
 
 export function ResultActions({ resultText, slug, shareValues, onSave, toolId }: {
@@ -101,7 +105,6 @@ export function ResultActions({ resultText, slug, shareValues, onSave, toolId }:
   onSave?: () => void;
   toolId?: string;              // 传了才弹「存到哪」选择框(否则直接存当前商品,向后兼容)
 }) {
-  const { user } = useAuth();
   const [copied, setCopied] = useState<"" | "result" | "link" | "saved">("");
   const [toast, setToast] = useState("");
   const [saveOpen, setSaveOpen] = useState(false);
@@ -110,14 +113,17 @@ export function ResultActions({ resultText, slug, shareValues, onSave, toolId }:
       await navigator.clipboard.writeText(text);
       setCopied(kind);
       setTimeout(() => setCopied(""), 1500);
-    } catch { /* clipboard blocked */ }
+    } catch {
+      setToast("复制未完成，请允许浏览器使用剪贴板后重试。");
+      setTimeout(() => setToast(""), 3000);
+    }
   }
   // 弹窗把目标设为当前商品后回调 —— onSave 仍写「当前商品」,零改动复用。
   function doSave() {
     onSave?.();
     const name = currentProduct()?.name?.trim();
     setCopied("saved");
-    setToast(`已保存${name ? `到「${name}」` : ""}${user ? " · 云端同步" : "(本机)"} · 在「我的商品」可回看`);
+    setToast(`已保存${name ? `到「${name}」` : ""}(本机) · 在「我的商品」可回看`);
     setTimeout(() => setCopied(""), 1500);
     setTimeout(() => setToast(""), 2600);
   }
@@ -148,7 +154,7 @@ export function ResultActions({ resultText, slug, shareValues, onSave, toolId }:
   );
 }
 
-export function HistoryStrip({ items, onRestore, onClear, render, isCloud, productName }: {
+export function HistoryStrip({ items, onRestore, onClear, render, productName }: {
   items: HistItem[];
   onRestore: (values: ToolValues) => void;
   onClear: () => void;
@@ -159,7 +165,7 @@ export function HistoryStrip({ items, onRestore, onClear, render, isCloud, produ
   if (!items.length) return null;
   return (
     <div className="history-strip">
-      <span>「{productName || "未命名商品"}」的 {items.length} 次测算{isCloud ? " · 云端" : " · 本机(登录后云端同步)"}</span>
+      <span>「{productName || "未命名商品"}」的 {items.length} 次测算 · 本机</span>
       {items.map((it, i) => (
         <button key={it.id ?? it.ts} className={i === 0 ? "hist-newest" : undefined}
           onClick={() => onRestore(it.values)} title="点击恢复">{render(it.values)}</button>

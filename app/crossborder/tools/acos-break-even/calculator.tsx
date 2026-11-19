@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../../site-link";
+
 
 /**
  * 广告盈亏规划器。
@@ -10,11 +12,9 @@
  */
 
 import { useMemo, useState } from "react";
-import { AI_ENABLED } from "../../../../lib/api";
-import { AlertTriangle, BarChart3, Calculator, Info, MousePointerClick, Sparkles } from "lucide-react";
+import { AlertTriangle, BarChart3, Calculator, Info, MousePointerClick } from "lucide-react";
 import { ToolPageShell, NumberField, Assumption, money, useToolImport, ScenarioLadder } from "../tool-kit";
 import { ModelPrefillBanner, useProductModelPrefill } from "../model-prefill";
-import { ImportDrawer } from "../import-drawer";
 import {
   ResultActions, HistoryStrip, useToolHistory, useSharedInitial, type ToolValues,
 } from "../tool-actions";
@@ -22,7 +22,7 @@ import {
   adMetrics, planAds, cpcScenarios, cpcBand, detectAdIssues,
 } from "../../../../lib/crossborder/ad-planner";
 
-const IMPORT_SAMPLE = "售价 29.9 美元，采购和物流总成本 14.2 美元，平台佣金 15%，想保住 15% 净利。广告花了 300 美元，带来 1200 美元销售、500 次点击、40 单。";
+
 
 export function AcosCalculator() {
   const [price, setPrice] = useState(29.9);
@@ -118,9 +118,7 @@ export function AcosCalculator() {
 
   return (
     <>
-      <ToolPageShell activeId="acos" headerAction={
-        <button className="import-btn" onClick={() => imp.setOpen(true)} disabled={!AI_ENABLED}><Sparkles size={15} /> {AI_ENABLED ? "智能读取资料" : "智能读取 · 即将上线"}</button>
-      }>
+      <ToolPageShell activeId="acos">
         <section className="param-col">
           <ModelPrefillBanner prefill={prefill} onFill={(v) => imp.applyModel(v)} />
 
@@ -292,7 +290,7 @@ export function AcosCalculator() {
 
           <Assumption formula="保本 ACoS = 单件毛利 ÷ 售价    (单件毛利 = 售价 − 单件成本 − 平台佣金 − 退款损耗)">
             <ul>
-              <li><strong>目标 ACoS</strong>= (单件毛利 − 售价 × 目标净利率) ÷ 售价;红线与<a href="/crossborder/tools/profit-calculator">利润计算器</a>广告卡片同一口径。</li>
+              <li><strong>目标 ACoS</strong>= (单件毛利 − 售价 × 目标净利率) ÷ 售价;红线与<SiteLink href="/crossborder/tools/profit-calculator">利润计算器</SiteLink>广告卡片同一口径。</li>
               <li><strong>CPC 上限</strong>= 每单可承受广告费 × CVR(每单广告费 = CPC ÷ CVR)。</li>
               <li><b>ACoS 没有统一的「好坏」:</b>新品拉新、清库存与稳定盈利的合理区间不同,低 ACoS 也可能只是曝光不足。</li>
               <li><strong>实测口径要当心:</strong>归因时间窗(7 天 / 14 天不同)、SP/SB/SD 类型口径不一、多件订单会让归因客单价偏离售价、新品期目标与成熟期不同。</li>
@@ -302,9 +300,6 @@ export function AcosCalculator() {
 
         </section>
       </ToolPageShell>
-
-      <ImportDrawer toolId="acos" open={imp.open} sampleText={IMPORT_SAMPLE}
-        onClose={() => imp.setOpen(false)} onConfirm={imp.applyImport} />
     </>
   );
 }

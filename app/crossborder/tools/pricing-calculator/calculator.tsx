@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../../site-link";
+
 
 /**
  * 定价决策模拟器。
@@ -9,11 +11,10 @@
  */
 
 import { useMemo, useState } from "react";
-import { AI_ENABLED } from "../../../../lib/api";
-import { AlertTriangle, Calculator, Info, Layers3, Plus, Sparkles, Tag } from "lucide-react";
+import { AlertTriangle, Calculator, Info, Layers3, Plus, Tag } from "lucide-react";
 import { ToolPageShell, NumberField, Assumption, ScenarioLadder, money, useToolImport } from "../tool-kit";
 import { ModelPrefillBanner, useProductModelPrefill } from "../model-prefill";
-import { ImportDrawer, type ImportedField } from "../import-drawer";
+
 import { BlockCard } from "../cost-blocks";
 import {
   ResultActions, HistoryStrip, useToolHistory, useSharedInitial, type ToolValues,
@@ -26,7 +27,7 @@ import {
   TARGET_LABELS, type SimTarget,
 } from "../../../../lib/crossborder/pricing-sim";
 
-const IMPORT_SAMPLE = "一件商品全部成本 12 美元，希望净利率 25%，平台佣金 15%，广告预算占 10%，退款约 2%。";
+
 
 type TargetKind = SimTarget["kind"];
 
@@ -93,30 +94,9 @@ export function PricingCalculator() {
   function removeBlock(id: string) { setBlocks((bs) => bs.filter((b) => b.id !== id)); }
 
   // 积木参数一并交给 AI 读取，与利润页同一套做法。
-  const importDynamicFields = blocks.flatMap((b) =>
-    BLOCK_TYPES[b.type].fields.map((f) => ({
-      key: `block:${b.id}:${f.key}`,
-      label: `${b.name} · ${f.label}`,
-      kind: f.prefix === "$" ? "money" : f.suffix === "%" ? "percent" : "number",
-      description: `${b.name}的${f.label}`,
-    })),
-  );
 
-  function applyImport(fields: ImportedField[]) {
-    const base = fields.filter((f) => !f.key.startsWith("block:"));
-    const updates = new Map<string, Record<string, number>>();
-    for (const f of fields) {
-      if (!f.key.startsWith("block:")) continue;
-      const [, blockId, paramKey] = f.key.split(":");
-      const cur = updates.get(blockId) ?? {};
-      cur[paramKey] = f.value;
-      updates.set(blockId, cur);
-    }
-    if (updates.size) {
-      setBlocks((bs) => bs.map((b) => (updates.has(b.id) ? { ...b, params: { ...b.params, ...updates.get(b.id) } } : b)));
-    }
-    imp.applyImport(base);
-  }
+
+
 
   /** 快照必须与表单字段一一对应 —— 少一个,分享/回看时那一项就悄悄回到默认值。
    *  vatRate 此前漏在外面:含税站点存的记录一回看就按不含税倒推,售价定低一截。 */
@@ -158,9 +138,7 @@ export function PricingCalculator() {
 
   return (
     <>
-      <ToolPageShell activeId="pricing" headerAction={
-        <button className="import-btn" onClick={() => imp.setOpen(true)} disabled={!AI_ENABLED}><Sparkles size={15} /> {AI_ENABLED ? "智能读取资料" : "智能读取 · 即将上线"}</button>
-      }>
+      <ToolPageShell activeId="pricing">
         <section className="param-col">
           <ModelPrefillBanner prefill={prefill} onFill={(v, bs) => { imp.applyModel(v); setBlocks(bs); }} />
 
@@ -305,16 +283,12 @@ export function PricingCalculator() {
               <li><strong>留存比例</strong>= 1 − 佣金% − 广告% − 退款% − 按售价百分比计的成本模块。</li>
               <li><strong>固定成本</strong>= 总成本 + 其余成本模块折算到每件的金额;四种目标都由此解析倒推,与利润计算器<b>同一口径</b>。</li>
               <li><strong>ROI</strong>= 利润 ÷ 自垫成本(采购+物流+固定成本模块);按售价比例计的费用由平台从货款扣除,不计入自垫。</li>
-              <li><strong>最大广告占比</strong>是占售价的 TACoS 口径,已扣掉退款与成本模块,比 <a href="/crossborder/tools/acos-break-even">ACoS 工具</a>的保本 ACoS 更严格。</li>
+              <li><strong>最大广告占比</strong>是占售价的 TACoS 口径,已扣掉退款与成本模块,比 <SiteLink href="/crossborder/tools/acos-break-even">ACoS 工具</SiteLink>的保本 ACoS 更严格。</li>
               <li>佣金按售价线性计,未含阶梯/最低佣金与优惠券手续费。<b>本工具只给财务可行区间,不承诺「最优价」。</b></li>
             </ul>
           </Assumption>
         </section>
       </ToolPageShell>
-
-      <ImportDrawer toolId="pricing" open={imp.open} sampleText={IMPORT_SAMPLE}
-        dynamicFields={importDynamicFields}
-        onClose={() => imp.setOpen(false)} onConfirm={applyImport} />
     </>
   );
 }

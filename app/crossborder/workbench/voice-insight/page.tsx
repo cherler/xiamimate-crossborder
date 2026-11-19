@@ -1,11 +1,12 @@
+import { siteUrl } from "../../../../lib/site";
 import type { Metadata } from "next";
 import { WorkbenchPage } from "../workbench-page";
 import { InsightPanel } from "./insight";
 
 export const metadata: Metadata = {
-  title: "用户声音与竞品洞察｜跨境经营工具 · 虾米伙伴",
-  description: "从你的批量评论与竞品评论里找出有证据、可量化的问题主题，并映射到产品、图片与文案的具体修改。频次与占比由系统按实际样本计算。",
-  alternates: { canonical: "/crossborder/workbench/voice-insight" },
+  title: "评论与竞品样本分析｜虾米跨境",
+  description: "导入自己持有的评论 CSV，按可编辑关键词统计主题、评分与占比，并查看代表性原文和竞品样本对比。",
+  alternates: { canonical: siteUrl("/crossborder/workbench/voice-insight") },
 };
 
 export default function VoiceInsightPage() {

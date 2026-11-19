@@ -1,6 +1,5 @@
 /* 平台页眉/页脚的样式已搬去 chrome-embed/chrome.css —— 那是主站与所有子应用
    共用的唯一一份。别在这里再写页眉的规则（见那个文件顶部的说明）。 */
-@import "../chrome-embed/chrome.css";
 
 @import "./brand-tokens.css";
 @import "tailwindcss";

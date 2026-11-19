@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../../site-link";
+
 
 /**
  * 综合研究样例报告(静态写死)—— ?type=full 时展示。
@@ -18,7 +20,6 @@ import type { ReportFindings, ReportTheme } from "../../../../lib/crossborder/re
 import {
   ClaimGap, CoverageBars, DiffMatrix, DivergingThemes, MotivationBars, PositionMap, PriorityMatrix,
 } from "../report/charts";
-import { SampleLifecycle, SampleRescan } from "./sample-ops";
 
 const TEAL = "#0c9488";
 const NEG = "#b45309";
@@ -218,7 +219,7 @@ export function FullSample() {
       <div className="ambient ambient-one" /><div className="ambient ambient-two" />
       <SiteHeader active="crossborder" />
       <section className="tool-page rr-page">
-        <a className="tool-breadcrumb" href="/crossborder/research/"><ArrowLeft size={13} /> 深度研究</a>
+        <SiteLink className="tool-breadcrumb" href="/"><ArrowLeft size={13} /> 深度研究</SiteLink>
 
         <div className="rr-sample-banner">
           <Info size={15} />
@@ -226,10 +227,10 @@ export function FullSample() {
         </div>
 
         <div className="rr-cat-toggle" role="tablist" aria-label="样例类型">
-          <a role="tab" href="/crossborder/research/sample/">口碑与需求洞察</a>
-          <a role="tab" href="/crossborder/research/sample/?type=rival">商品与竞品对比</a>
+          <SiteLink role="tab" href="/crossborder/research/sample/">口碑与需求洞察</SiteLink>
+          <SiteLink role="tab" href="/crossborder/research/sample/?type=rival">商品与竞品对比</SiteLink>
           <button role="tab" aria-selected className="on">商品综合研究</button>
-          <a role="tab" href="/crossborder/research/sample/?type=tiktok">TikTok Shop 平台</a>
+          <SiteLink role="tab" href="/crossborder/research/sample/?type=tiktok">TikTok Shop 平台</SiteLink>
           <span>最全的一档:洞察的深度 + 竞品对比的差异矩阵,顶部一页决策摘要拍板</span>
         </div>
 
@@ -240,8 +241,8 @@ export function FullSample() {
           </div>
         </header>
 
-        <SampleLifecycle />
-        <SampleRescan />
+
+
 
         {/* 一页决策摘要:置顶承载全部结论(不入目录,与正式报告一致);下方各章只做证据展开 */}
         <div className="rr-decision">
@@ -279,7 +280,7 @@ export function FullSample() {
 
         <div className="rr-body">
           <nav className="rr-toc" aria-label="报告目录">
-            {TOC.map((t) => <a key={t.id} href={`#${t.id}`}>{t.t}</a>)}
+            {TOC.map((t) => <SiteLink key={t.id} href={`#${t.id}`}>{t.t}</SiteLink>)}
           </nav>
 
           <article className="rr-article">
@@ -432,8 +433,8 @@ export function FullSample() {
         </div>
 
         <div className="rr-sample-cta">
-          <p>想对你的商品做综合研究?一个商品即可,竞品选填(补 ≥2 个可让竞品差异矩阵更实),先扫描。</p>
-          <a href="/crossborder/research/product-insight/?intent=full">开始综合研究 →</a>
+          <p>准备好自己的评论 CSV 后，可到评论工作台进行本地统计与对比。</p>
+          <SiteLink href="/crossborder/workbench/voice-insight/">分析自己的评论 →</SiteLink>
         </div>
       </section>
       <SiteFooter />

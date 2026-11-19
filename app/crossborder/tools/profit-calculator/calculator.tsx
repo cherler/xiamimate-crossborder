@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../../site-link";
+
 
 /**
  * 利润计算器独立工具页。
@@ -9,8 +11,7 @@
 
 import { ProductSwitcher } from "../product-switcher";
 import { useEffect, useMemo, useState } from "react";
-import { AI_ENABLED } from "../../../../lib/api";
-import { AlertTriangle, ArrowLeft, BarChart3, CircleDollarSign, Download, Info, Layers3, Plus, RotateCcw, Save, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
+import { AlertTriangle, ArrowLeft, BarChart3, CircleDollarSign, Download, Info, Layers3, Plus, RotateCcw, Save, ShieldCheck, TrendingUp } from "lucide-react";
 import { SiteFooter, SiteHeader } from "../../../site-chrome";
 import {
   calculateProfit, DEFAULT_PROFIT_VALUES, worstCase, type ProfitValues,
@@ -28,7 +29,7 @@ import {
 } from "../../../../lib/crossborder/product-model";
 import { CROSSBORDER_TOOLS } from "../../../../lib/crossborder/registry";
 import { takePendingImport } from "../../../../lib/crossborder/pending-import";
-import { ImportDrawer, type ImportedField } from "../import-drawer";
+
 import { BlockCard } from "../cost-blocks";
 import { CostTemplateRow } from "../cost-template-row";
 import type { TemplateRates } from "../../../../lib/crossborder/cost-templates";
@@ -131,7 +132,7 @@ function exportCsv(values: ProfitValues, target: number, productName: string) {
   URL.revokeObjectURL(a.href);
 }
 
-const IMPORT_SAMPLE = "Amazon 美国站卖一款桌面收纳盒，售价 29.9 美元，采购 8，国内运费 0.6，头程 2.4，FBA 4.2，平台佣金 15%，广告预计 12%。";
+
 
 const FIELDS: Array<{ key: ProfitKey; label: string; prefix?: string; suffix?: string }> = [
   { key: "price", label: "售价", prefix: "$" },
@@ -289,7 +290,7 @@ export function ProfitCalculator() {
   // 用户亲手改过的字段。没改过、又恰好等于默认值的,在界面上标出来。
   const [touched, setTouched] = useState<Set<string>>(new Set());
   const [target, setTarget] = useState(20);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const [aiFilled, setAiFilled] = useState<Set<ProfitKey>>(new Set());
   const [blocks, setBlocks] = useState<CostBlock[]>([]);
   /**
@@ -439,38 +440,9 @@ export function ProfitCalculator() {
   }
 
   // 当前已添加积木的参数，作为动态字段一起交给 AI 读取。
-  const importDynamicFields = blocks.flatMap((b) =>
-    BLOCK_TYPES[b.type].fields.map((f) => ({
-      key: `block:${b.id}:${f.key}`,
-      label: `${b.name} · ${f.label}`,
-      kind: f.prefix === "$" ? "money" : f.suffix === "%" ? "percent" : "number",
-      description: `${b.name}的${f.label}`,
-    })),
-  );
 
-  function applyImport(fields: ImportedField[]) {
-    const baseFields = fields.filter((f) => !f.key.startsWith("block:"));
-    const blockUpdates = new Map<string, Record<string, number>>();
-    for (const f of fields) {
-      if (!f.key.startsWith("block:")) continue;
-      const [, blockId, paramKey] = f.key.split(":");
-      const cur = blockUpdates.get(blockId) ?? {};
-      cur[paramKey] = f.value;
-      blockUpdates.set(blockId, cur);
-    }
-    if (baseFields.length) {
-      setValues((cur) => {
-        const next = { ...cur };
-        for (const f of baseFields) next[f.key as ProfitKey] = f.value;
-        return next;
-      });
-    }
-    if (blockUpdates.size) {
-      setBlocks((bs) => bs.map((b) => (blockUpdates.has(b.id) ? { ...b, params: { ...b.params, ...blockUpdates.get(b.id) } } : b)));
-    }
-    setAiFilled(new Set(baseFields.map((f) => f.key as ProfitKey)));
-    setDrawerOpen(false);
-  }
+
+
 
   // 快照包含成本模型与版本号，保证分享链接 / 历史记录可复现（risk #4）。
   const shareValues: ToolValues = { ...values, target, mv: 1, blocks: JSON.stringify(blocks) };
@@ -512,16 +484,13 @@ export function ProfitCalculator() {
       <SiteHeader active="crossborder" />
 
       <section className="tool-page">
-        <a className="tool-breadcrumb" href="/crossborder"><ArrowLeft size={13} /> 虾米跨境</a>
+        <SiteLink className="tool-breadcrumb" href="/crossborder"><ArrowLeft size={13} /> 虾米跨境</SiteLink>
 
         <div className="tool-page-head">
           <div className="tool-page-title">
             <span className="tool-page-icon"><CircleDollarSign size={22} /></span>
             <div><span>CROSS-BORDER / 利润与定价</span><h1>利润计算器</h1></div>
           </div>
-          <button className="import-btn" onClick={() => setDrawerOpen(true)} disabled={!AI_ENABLED}>
-            <Sparkles size={15} /> {AI_ENABLED ? "智能读取资料" : "智能读取 · 即将上线"}
-          </button>
         </div>
 
         <div className="tool-belt"><ProductSwitcher /></div>
@@ -692,7 +661,7 @@ export function ProfitCalculator() {
                   <div className="acos-card">
                     <div className="acos-head">
                       <span><BarChart3 size={14} /> 广告盈亏红线</span>
-                      <a href="/crossborder/tools/acos-break-even">完整测算 →</a>
+                      <SiteLink href="/crossborder/tools/acos-break-even">完整测算 →</SiteLink>
                     </div>
                     <div className="acos-row">
                       <div>
@@ -781,16 +750,13 @@ export function ProfitCalculator() {
           <span>其他工具</span>
           {otherTools.map((t) => (
             t.status === "available"
-              ? <a key={t.id} className="tool-pill" href={`/crossborder/tools/${t.slug}`}>{t.name}</a>
+              ? <SiteLink key={t.id} className="tool-pill" href={`/crossborder/tools/${t.slug}`}>{t.name}</SiteLink>
               : <span key={t.id} className="tool-pill is-locked">{t.name} · 迁移中</span>
           ))}
         </div>
       </section>
 
       <SiteFooter />
-      <ImportDrawer toolId="profit" open={drawerOpen} sampleText={IMPORT_SAMPLE}
-        dynamicFields={importDynamicFields}
-        onClose={() => setDrawerOpen(false)} onConfirm={applyImport} />
     </main>
   );
 }

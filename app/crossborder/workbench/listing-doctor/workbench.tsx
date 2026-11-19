@@ -1,134 +1,255 @@
 "use client";
-
-/**
- * Listing 诊断工作台的容器：持有唯一一份商品项目，三段共用。
- *
- * 商品实体模型下,项目 = 「当前商品」的事实库字段:
- * readProject/writeProject 已委托实体仓,登录后随商品档案整体防抖上云。
- * 顶部挂商品切换器(R1);?item= 兼容旧版「我的商品」里的 listing_project 记录。
- */
-
-import { useEffect, useState } from "react";
-import { Bookmark, Check, RotateCcw } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { ProductSwitcher } from "../../tools/product-switcher";
 import { SaveResultModal } from "../../tools/save-result-modal";
-import { useAuth } from "../../../../lib/auth";
-import { itemsApi } from "../../../../lib/items";
-import { currentProduct, saveProductRecord } from "../../../../lib/crossborder/products";
 import {
-  clearProject, readProject, seededProject, writableFacts, writeProject, type ProductProject,
+  seededProject,
+  readProject,
+  writeProject,
+  touch,
+  type ProductProject,
 } from "../../../../lib/crossborder/product-facts";
-import { ProjectPanel } from "./project";
-import { DiagnosisPanel } from "./diagnosis";
-import { RewritePanel } from "./rewrite";
-
+import {
+  diagnose,
+  summarize,
+} from "../../../../lib/crossborder/listing-diagnosis";
+import {
+  saveProductRecord,
+  getSyncState,
+  currentProduct,
+} from "../../../../lib/crossborder/products";
+import { downloadText } from "../../../../lib/crossborder/backup";
 export function ListingDoctor() {
-  const { user, loading } = useAuth();
-  const [project, setProject] = useState<ProductProject | null>(null);
-  const [hydrated, setHydrated] = useState(false);
-  const [saveOpen, setSaveOpen] = useState(false);
-  const [saved, setSaved] = useState(false);
-
+  const [project, setProject] = useState<ProductProject | null>(null),
+    [message, setMessage] = useState(""),
+    [saveOpen, setSaveOpen] = useState(false);
   useEffect(() => {
-    setProject(readProject() ?? seededProject("p1", ""));
-    setHydrated(true);
-  }, []);
-  useEffect(() => {
-    if (!hydrated || !project) return;
-    writeProject(project);
-  }, [hydrated, project]);
-
-  // #6:从商品档案点「Listing 快照」回来(?snap=<recordId>)→ 把那一版事实+草稿原样还原。
-  useEffect(() => {
-    if (!hydrated) return;
     const snap = new URLSearchParams(window.location.search).get("snap");
-    if (!snap) return;
-    const proj = (currentProduct()?.records?.find((r) => r.id === snap)?.values as { project?: ProductProject })?.project;
-    if (proj) setProject(proj);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated]);
-
-  // 兼容旧版:?item= 指向早期单独存的 listing_project 云记录,读进当前商品。
-  useEffect(() => {
-    if (loading || !user || !hydrated) return;
-    const wanted = new URLSearchParams(window.location.search).get("item");
-    if (!wanted) return;
-    (async () => {
-      try {
-        const d = await itemsApi.list("crossborder", "listing_project");
-        const hit = d.items.find((i) => i.item_id === wanted);
-        if (hit) setProject(hit.payload as unknown as ProductProject);
-      } catch { /* 拿不到就算了 */ }
-    })();
-  }, [loading, user, hydrated]);
-
-  if (!project) return null;
-
-  // 没有任何输入/输出(无已确认事实、无 Listing 草稿)时禁用保存快照。
-  const nothingToSave = writableFacts(project).length === 0
-    && !project.listing.title.trim() && !project.listing.bullets?.some((b) => b.trim());
-
-  function reset() {
-    clearProject();
-    setProject(seededProject("p1", ""));
+    const saved = snap
+      ? currentProduct()?.records?.find((r) => r.id === snap)?.values.project
+      : undefined;
+    setProject(
+      (saved as ProductProject | undefined) ??
+        readProject() ??
+        seededProject("local", ""),
+    );
+  }, []);
+  const findings = useMemo(
+    () =>
+      project
+        ? diagnose({
+            listingTitle: project.listing.title,
+            bullets: project.listing.bullets,
+            keywords: project.keywords,
+            project,
+            snapshot: project.snapshot,
+          })
+        : [],
+    [project],
+  );
+  function change(next: ProductProject) {
+    const p = touch(next);
+    setProject(p);
+    writeProject(p);
+    setMessage(
+      getSyncState().localFull
+        ? "空间不足，请立即到我的商品导出备份。"
+        : "已保存到当前商品",
+    );
   }
-
-  // 保存本次快照:把当前商品项目(已确认事实 + Listing 草稿)存成一条记录,可回头对照。
-  function doSaveSnapshot() {
+  if (!project) return <p>正在读取本机档案…</p>;
+  const p = project;
+  function save() {
     if (!project) return;
-    const confirmed = writableFacts(project);
-    const listing = project.listing;
-    const summary = [
-      `商品:${project.name || "未命名"}${project.marketplace ? ` · ${project.marketplace}` : ""}`,
-      `已确认事实 ${confirmed.length} 条:`,
-      ...confirmed.map((f) => `- ${f.label}:${f.value}`),
-      listing.title ? `【当前 Listing 标题】\n${listing.title}` : "",
-      listing.bullets?.length ? `【五点描述】\n${listing.bullets.map((b, i) => `${i + 1}. ${b}`).join("\n")}` : "",
-    ].filter(Boolean).join("\n");
-    saveProductRecord("listing", `Listing 快照 · ${confirmed.length} 条事实`, {
-      summary, facts: confirmed.length, title: listing.title, bullets: listing.bullets,
-      // 存整份项目 —— 供「打开工作台」把这一版的事实+草稿原样还原(#6)。
-      project: JSON.parse(JSON.stringify(project)) as ProductProject,
+    saveProductRecord("listing", "Listing 检查", {
+      project,
+      findings,
+      summary:
+        project.listing.title +
+        "\n" +
+        findings.map((f) => f.title + ": " + f.detail).join("\n"),
     });
-    setSaved(true); setTimeout(() => setSaved(false), 1500);
-    window.dispatchEvent(new CustomEvent("xm-pet", { detail: { mood: "happy" } }));
+    setMessage("检查快照已保存。");
   }
-
   return (
     <>
-      <div className="tool-belt"><ProductSwitcher /></div>
-
-      <div className="wb-stage">
-        <div className="wb-stage-head">
-          <span><b>1</b> 建立商品项目 · 确认事实</span>
-          <div className="wb-stage-actions">
-            <button className="wb-snapshot-btn" onClick={() => setSaveOpen(true)} disabled={nothingToSave}
-              title={nothingToSave ? "还没有可保存的内容 —— 先确认事实或写 Listing"
-                : "把当前事实库 + Listing 草稿存成一份快照,可存到商品档案或独立结果"}>
-              {saved ? <><Check size={13} /> 已保存</> : <><Bookmark size={13} /> 保存本次快照</>}
+      <ProductSwitcher />
+      <p className="local-note">
+        手动填写事实与来源。本地检查不检索实时政策；缺少已核对规则的项目会明确标为未知。事实内容变化后需要重新确认。
+      </p>
+      <div className="local-grid">
+        <section className="local-panel">
+          <h2>商品事实</h2>
+          <label className="local-field">
+            项目名称
+            <input
+              value={p.name}
+              onChange={(e) => change({ ...p, name: e.target.value })}
+            />
+          </label>
+          <label className="local-field">
+            销售站点
+            <input
+              value={p.marketplace}
+              onChange={(e) => change({ ...p, marketplace: e.target.value })}
+            />
+          </label>
+          {p.facts.map((f, i) => (
+            <div className="local-record" key={f.key}>
+              <label className="local-field">
+                {f.label}
+                <input
+                  value={f.value}
+                  placeholder="资料里没有就留空"
+                  onChange={(e) =>
+                    change({
+                      ...p,
+                      facts: p.facts.map((x, j) =>
+                        j === i
+                          ? {
+                              ...x,
+                              value: e.target.value,
+                              status: e.target.value.trim()
+                                ? "unconfirmed"
+                                : "unknown",
+                              source: "user",
+                              updatedAt: Date.now(),
+                            }
+                          : x,
+                      ),
+                    })
+                  }
+                />
+              </label>
+              <label className="local-field">
+                来源说明
+                <input
+                  value={f.sourceNote}
+                  onChange={(e) =>
+                    change({
+                      ...p,
+                      facts: p.facts.map((x, j) =>
+                        j === i
+                          ? {
+                              ...x,
+                              sourceNote: e.target.value,
+                              status: "unconfirmed",
+                            }
+                          : x,
+                      ),
+                    })
+                  }
+                />
+              </label>
+              <label className="local-note">
+                <input
+                  type="checkbox"
+                  checked={f.status === "confirmed"}
+                  disabled={!f.value.trim()}
+                  onChange={(e) =>
+                    change({
+                      ...p,
+                      facts: p.facts.map((x, j) =>
+                        j === i
+                          ? {
+                              ...x,
+                              status: e.target.checked
+                                ? "confirmed"
+                                : "unconfirmed",
+                            }
+                          : x,
+                      ),
+                    })
+                  }
+                />{" "}
+                我已核对这条事实
+              </label>
+            </div>
+          ))}
+        </section>
+        <section className="local-panel">
+          <h2>编辑与检查</h2>
+          <label className="local-field">
+            标题
+            <textarea
+              value={p.listing.title}
+              onChange={(e) =>
+                change({
+                  ...p,
+                  listing: { ...p.listing, title: e.target.value },
+                })
+              }
+            />
+          </label>
+          <label className="local-field">
+            五点描述（每行一条）
+            <textarea
+              value={p.listing.bullets.join("\n")}
+              onChange={(e) =>
+                change({
+                  ...p,
+                  listing: {
+                    ...p.listing,
+                    bullets: e.target.value.split("\n"),
+                  },
+                })
+              }
+            />
+          </label>
+          <label className="local-field">
+            目标关键词（逗号分隔）
+            <input
+              value={p.keywords.join(", ")}
+              onChange={(e) =>
+                change({
+                  ...p,
+                  keywords: e.target.value.split(/[,，]/).map((x) => x.trim()),
+                })
+              }
+            />
+          </label>
+          <div className="local-actions">
+            <button className="primary" onClick={() => setSaveOpen(true)}>
+              保存检查快照
             </button>
-            <button onClick={reset}><RotateCcw size={12} /> 清空当前商品的事实库</button>
+            <button
+              onClick={() =>
+                downloadText(
+                  "listing.txt",
+                  p.listing.title + "\n\n" + p.listing.bullets.join("\n"),
+                  "text/plain",
+                )
+              }
+            >
+              导出文案
+            </button>
           </div>
-        </div>
+          <h3>检查结果 · {findings.length} 项</h3>
+          <p className="local-note">
+            {summarize(findings).violations ?? 0}{" "}
+            项规则问题；其余缺口请逐项核对。
+          </p>
+          {findings.map((f) => (
+            <div className="local-finding" key={f.id}>
+              <b>{f.title}</b>
+              <p>{f.detail}</p>
+              {f.evidence && <small>{f.evidence}</small>}
+            </div>
+          ))}
+        </section>
       </div>
-      <ProjectPanel project={project} onChange={setProject} />
-
-      <div className="wb-stage">
-        <div className="wb-stage-head">
-          <span><b>2</b> 按事实与规则诊断现有 Listing</span>
-          <em>判定不调模型 · 同一份输入永远同一份结论</em>
-        </div>
-      </div>
-      <DiagnosisPanel project={project} onChange={setProject} />
-
-      <div className="wb-stage">
-        <div className="wb-stage-head">
-          <span><b>3</b> 按问题改写 · 改完复检 · 导出</span>
-          <em>改写用 AI · 复检仍不调模型</em>
-        </div>
-      </div>
-      <RewritePanel project={project} onChange={setProject} />
-      {saveOpen && <SaveResultModal toolId="listing" onConfirm={doSaveSnapshot} onClose={() => setSaveOpen(false)} />}
+      {message && (
+        <p role="status" className="local-note">
+          {message}
+        </p>
+      )}
+      {saveOpen && (
+        <SaveResultModal
+          toolId="listing"
+          onConfirm={save}
+          onClose={() => setSaveOpen(false)}
+        />
+      )}
     </>
   );
 }

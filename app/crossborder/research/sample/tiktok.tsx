@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../../site-link";
+
 
 /**
  * TikTok Shop 平台样例报告(静态写死)—— ?type=tiktok 时展示。
@@ -13,7 +15,6 @@ import { ArrowLeft, Info, ShieldCheck, Sparkles } from "lucide-react";
 import { SiteFooter, SiteHeader } from "../../../site-chrome";
 import type { ReportFindings, ReportTheme } from "../../../../lib/crossborder/research/types";
 import { CoverageBars, DivergingThemes, MotivationBars, PriorityMatrix } from "../report/charts";
-import { SampleLifecycle, SampleRescan } from "./sample-ops";
 
 const TEAL = "#0c9488";
 const NEG = "#b45309";
@@ -162,7 +163,7 @@ export function TikTokSample() {
       <div className="ambient ambient-one" /><div className="ambient ambient-two" />
       <SiteHeader active="crossborder" />
       <section className="tool-page rr-page">
-        <a className="tool-breadcrumb" href="/crossborder/research/"><ArrowLeft size={13} /> 深度研究</a>
+        <SiteLink className="tool-breadcrumb" href="/"><ArrowLeft size={13} /> 深度研究</SiteLink>
 
         <div className="rr-sample-banner">
           <Info size={15} />
@@ -170,9 +171,9 @@ export function TikTokSample() {
         </div>
 
         <div className="rr-cat-toggle" role="tablist" aria-label="样例类型">
-          <a role="tab" href="/crossborder/research/sample/">口碑与需求洞察</a>
-          <a role="tab" href="/crossborder/research/sample/?type=rival">商品与竞品对比</a>
-          <a role="tab" href="/crossborder/research/sample/?type=full">商品综合研究</a>
+          <SiteLink role="tab" href="/crossborder/research/sample/">口碑与需求洞察</SiteLink>
+          <SiteLink role="tab" href="/crossborder/research/sample/?type=rival">商品与竞品对比</SiteLink>
+          <SiteLink role="tab" href="/crossborder/research/sample/?type=full">商品综合研究</SiteLink>
           <button role="tab" aria-selected className="on">TikTok Shop 平台</button>
           <span>选 TikTok Shop 时,除公开网络外会接入平台真实评价(第三方接口,已去个人身份)</span>
         </div>
@@ -184,8 +185,8 @@ export function TikTokSample() {
           </div>
         </header>
 
-        <SampleLifecycle />
-        <SampleRescan />
+
+
 
         <div className="rr-verdicts">
           {VERDICTS.map((v) => (
@@ -200,7 +201,7 @@ export function TikTokSample() {
 
         <div className="rr-body">
           <nav className="rr-toc" aria-label="报告目录">
-            {TOC.map((t) => <a key={t.id} href={`#${t.id}`}>{t.t}</a>)}
+            {TOC.map((t) => <SiteLink key={t.id} href={`#${t.id}`}>{t.t}</SiteLink>)}
           </nav>
 
           <article className="rr-article">
@@ -315,8 +316,8 @@ export function TikTokSample() {
         </div>
 
         <div className="rr-sample-cta">
-          <p>想对你的 TikTok Shop 商品做一份?在启动页把平台选成 TikTok Shop,先扫描。</p>
-          <a href="/crossborder/research/product-insight/">开始研究 →</a>
+          <p>准备好自己的评论 CSV 后，可到评论工作台进行本地统计与对比。</p>
+          <SiteLink href="/crossborder/workbench/voice-insight/">分析自己的评论 →</SiteLink>
         </div>
       </section>
       <SiteFooter />

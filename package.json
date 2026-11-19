@@ -1,5 +1,5 @@
 {
-  "name": "xiami-crossborder",
+  "name": "xiamimate-crossborder",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -10,7 +10,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ignore-pattern .next --ignore-pattern out",
-    "test": "tsx --test tests/*.test.ts"
+    "test": "node --import tsx --test tests/*.test.ts",
+    "build:pages": "NEXT_PUBLIC_BASE_PATH=/xiamimate-crossborder NEXT_PUBLIC_SITE_ORIGIN=https://cherler.github.io next build",
+    "check:static": "node scripts/check-static.mjs",
+    "test:browser": "node scripts/browser-smoke.mjs"
   },
   "dependencies": {
     "geist": "^1.7.2",
@@ -38,7 +41,7 @@
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cherler/xiami-crossborder.git"
+    "url": "https://github.com/cherler/xiamimate-crossborder.git"
   },
-  "homepage": "https://xiamimate.com/crossborder"
+  "homepage": "https://cherler.github.io/xiamimate-crossborder/"
 }

@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../../site-link";
+
 
 /**
  * 竞品对比样例报告(静态写死)—— ?type=rival 时展示。
@@ -13,7 +15,6 @@ import { AlertTriangle, ArrowLeft, GitCompare, Info } from "lucide-react";
 import { SiteFooter, SiteHeader } from "../../../site-chrome";
 import type { ReportFindings } from "../../../../lib/crossborder/research/types";
 import { DiffMatrix, PositionMap } from "../report/charts";
-import { SampleLifecycle, SampleRescan } from "./sample-ops";
 
 const TEAL = "#0c9488";
 const NEG = "#b45309";
@@ -155,7 +156,7 @@ export function RivalSample() {
       <div className="ambient ambient-one" /><div className="ambient ambient-two" />
       <SiteHeader active="crossborder" />
       <section className="tool-page rr-page">
-        <a className="tool-breadcrumb" href="/crossborder/research/"><ArrowLeft size={13} /> 深度研究</a>
+        <SiteLink className="tool-breadcrumb" href="/"><ArrowLeft size={13} /> 深度研究</SiteLink>
 
         <div className="rr-sample-banner">
           <Info size={15} />
@@ -163,10 +164,10 @@ export function RivalSample() {
         </div>
 
         <div className="rr-cat-toggle" role="tablist" aria-label="样例类型">
-          <a role="tab" href="/crossborder/research/sample/">口碑与需求洞察</a>
+          <SiteLink role="tab" href="/crossborder/research/sample/">口碑与需求洞察</SiteLink>
           <button role="tab" aria-selected className="on">商品与竞品对比</button>
-          <a role="tab" href="/crossborder/research/sample/?type=full">商品综合研究</a>
-          <a role="tab" href="/crossborder/research/sample/?type=tiktok">TikTok Shop 平台</a>
+          <SiteLink role="tab" href="/crossborder/research/sample/?type=full">商品综合研究</SiteLink>
+          <SiteLink role="tab" href="/crossborder/research/sample/?type=tiktok">TikTok Shop 平台</SiteLink>
           <span>竞品对比是横向多主体对齐 —— 定性口碑与定位差异,不是参数横评或实时比价</span>
         </div>
 
@@ -177,8 +178,8 @@ export function RivalSample() {
           </div>
         </header>
 
-        <SampleLifecycle />
-        <SampleRescan />
+
+
 
         <div className="rr-verdicts">
           {VERDICTS.map((v) => (
@@ -193,7 +194,7 @@ export function RivalSample() {
 
         <div className="rr-body">
           <nav className="rr-toc" aria-label="报告目录">
-            {TOC.map((t) => <a key={t.id} href={`#${t.id}`}>{t.t}</a>)}
+            {TOC.map((t) => <SiteLink key={t.id} href={`#${t.id}`}>{t.t}</SiteLink>)}
           </nav>
 
           <article className="rr-article">
@@ -314,8 +315,8 @@ export function RivalSample() {
         </div>
 
         <div className="rr-sample-cta">
-          <p>想对你的商品做竞品对比?需要 ≥2 个竞品,先扫描逐个确认身份,确认范围与消耗后开始。</p>
-          <a href="/crossborder/research/product-insight/?intent=rival_compare">开始竞品对比 →</a>
+          <p>准备好自己的评论 CSV 后，可到评论工作台进行本地统计与对比。</p>
+          <SiteLink href="/crossborder/workbench/voice-insight/">分析自己的评论 →</SiteLink>
         </div>
       </section>
       <SiteFooter />

@@ -10,10 +10,8 @@
  */
 
 import { useMemo, useState } from "react";
-import { AI_ENABLED } from "../../../../lib/api";
-import { AlertTriangle, Box, Calculator, Info, Sparkles } from "lucide-react";
+import { AlertTriangle, Box, Calculator, Info } from "lucide-react";
 import { ToolPageShell, NumberField, SelectField, Assumption, money, useToolImport } from "../tool-kit";
-import { ImportDrawer } from "../import-drawer";
 import {
   ResultActions, HistoryStrip, useToolHistory, useSharedInitial, type ToolValues,
 } from "../tool-actions";
@@ -22,7 +20,7 @@ import {
   type RoundMode,
 } from "../../../../lib/crossborder/dim-weight-rules";
 
-const IMPORT_SAMPLE = "包装尺寸 30 × 20 × 15 cm，实重 1.2 kg，走国际快递，运费单价 5 美元/kg。";
+
 
 const ROUND_LABEL: Record<RoundMode, string> = { none: "不取整", up: "向上取整", nearest: "四舍五入" };
 
@@ -139,9 +137,7 @@ export function DimWeightCalculator() {
 
   return (
     <>
-      <ToolPageShell activeId="dimweight" headerAction={
-        <button className="import-btn" onClick={() => imp.setOpen(true)} disabled={!AI_ENABLED}><Sparkles size={15} /> {AI_ENABLED ? "智能读取资料" : "智能读取 · 即将上线"}</button>
-      }>
+      <ToolPageShell activeId="dimweight">
         <section className="param-col">
           <div className="section-heading"><span><Box size={15} /> 包装与承运商</span><em>{isDemo && <i className="demo-chip">示例数据</i>}<button type="button" className="ph-clear" onClick={clearParams}>清空参数</button>手动填写 · 实时计算</em></div>
           <div className="field-grid">
@@ -315,9 +311,6 @@ export function DimWeightCalculator() {
 
         </section>
       </ToolPageShell>
-
-      <ImportDrawer toolId="dimweight" open={imp.open} sampleText={IMPORT_SAMPLE}
-        onClose={() => imp.setOpen(false)} onConfirm={imp.applyImport} />
     </>
   );
 }

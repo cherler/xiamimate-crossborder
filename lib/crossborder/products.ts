@@ -896,7 +896,7 @@ function needsPush(p: Product): boolean {
 export function hasUnpushedChanges(p: Product): boolean { return needsPush(p); }
 
 let cloudEnabled = false;
-export function setCloudEnabled(on: boolean) { cloudEnabled = on; }
+export function setCloudEnabled(_on: boolean) { cloudEnabled = false; }
 export function isCloudEnabled() { return cloudEnabled; }
 
 let pushTimer: ReturnType<typeof setTimeout> | null = null;
@@ -1291,7 +1291,7 @@ function isExampleSeed(p: Product): boolean {
  * 返回卸掉的份数。
  */
 export function evictColdProducts(force = false): number {
-  if (typeof window === "undefined" || evicting) return 0;
+  if (!cloudEnabled || typeof window === "undefined" || evicting) return 0;
   const s = readStore();
   const raw = window.localStorage.getItem(KEY);
   if (!raw) return 0;

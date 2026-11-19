@@ -1,11 +1,12 @@
+import { siteUrl } from "../../../../lib/site";
 import type { Metadata } from "next";
 import { WorkbenchPage } from "../workbench-page";
 import { CopilotPanel } from "./copilot";
 
 export const metadata: Metadata = {
-  title: "客服回复 Copilot｜跨境经营工具 · 虾米伙伴",
-  description: "在你提供的订单与商品上下文里生成回复，提示可能触碰平台消息规则之处，脱敏在调模型之前，违规检查不由模型自己做，且不代你发送。",
-  alternates: { canonical: "/crossborder/workbench/service-copilot" },
+  title: "客服回复工作台｜虾米跨境",
+  description: "准备中英文售后回复模板，手动编辑并检查常见风险表达；资料在本地处理，不代替用户发送。",
+  alternates: { canonical: siteUrl("/crossborder/workbench/service-copilot") },
 };
 
 export default function ServiceCopilotPage() {

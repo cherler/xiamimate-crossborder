@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../../site-link";
+
 
 /**
  * 样例报告(静态写死)—— P1:品类切换(电子/家居)+ 改用真实图表组件。
@@ -16,7 +18,6 @@ import { SiteFooter, SiteHeader } from "../../../site-chrome";
 import { RivalSample } from "./rival";
 import { FullSample } from "./full";
 import { TikTokSample } from "./tiktok";
-import { SampleLifecycle, SampleRescan } from "./sample-ops";
 import type { ReportFindings, ReportTheme } from "../../../../lib/crossborder/research/types";
 import {
   ClaimGap, CoverageBars, DivergingThemes, MotivationBars, PositionMap, PriorityMatrix,
@@ -310,19 +311,19 @@ export function SampleReport() {
       <div className="ambient ambient-one" /><div className="ambient ambient-two" />
       <SiteHeader active="crossborder" />
       <section className="tool-page rr-page">
-        <a className="tool-breadcrumb" href="/crossborder/research/"><ArrowLeft size={13} /> 深度研究</a>
+        <SiteLink className="tool-breadcrumb" href="/"><ArrowLeft size={13} /> 深度研究</SiteLink>
 
         <div className="rr-sample-banner">
           <Info size={15} />
-          <span><b>这是一份样例报告</b> —— 数据为演示编写,不是真实研究结论。你生成的正式报告,结构、图表与证据标注方式与此完全一致。</span>
+          <span><b>这是一份样例报告</b> —— 数据为演示编写,不是真实研究结论。用于展示研究结构、图表与证据标注方式，不是当前商品的分析结果。</span>
         </div>
 
         {/* 样例类型切换:口碑洞察(当前)| 竞品对比 */}
         <div className="rr-cat-toggle" role="tablist" aria-label="样例类型">
           <button role="tab" aria-selected className="on">口碑与需求洞察</button>
-          <a role="tab" href="/crossborder/research/sample/?type=rival">商品与竞品对比</a>
-          <a role="tab" href="/crossborder/research/sample/?type=full">商品综合研究</a>
-          <a role="tab" href="/crossborder/research/sample/?type=tiktok">TikTok Shop 平台</a>
+          <SiteLink role="tab" href="/crossborder/research/sample/?type=rival">商品与竞品对比</SiteLink>
+          <SiteLink role="tab" href="/crossborder/research/sample/?type=full">商品综合研究</SiteLink>
+          <SiteLink role="tab" href="/crossborder/research/sample/?type=tiktok">TikTok Shop 平台</SiteLink>
           <span>三种深度研究骨架一致;TikTok Shop 那档额外接入平台真实评价</span>
         </div>
 
@@ -340,8 +341,8 @@ export function SampleReport() {
           </div>
         </header>
 
-        <SampleLifecycle />
-        <SampleRescan />
+
+
 
         <div className="rr-verdicts">
           {d.verdicts.map((v) => (
@@ -356,7 +357,7 @@ export function SampleReport() {
 
         <div className="rr-body">
           <nav className="rr-toc" aria-label="报告目录">
-            {TOC.map((t, i) => <a key={t} href={`#${TOC_IDS[i]}`}>{t}</a>)}
+            {TOC.map((t, i) => <SiteLink key={t} href={`#${TOC_IDS[i]}`}>{t}</SiteLink>)}
           </nav>
 
           <article className="rr-article">
@@ -512,8 +513,8 @@ export function SampleReport() {
         </div>
 
         <div className="rr-sample-cta">
-          <p>想对你的商品做一份?正式研究先扫描预览范围与消耗,你确认后才开始。</p>
-          <a href="/crossborder/research/product-insight/">开始扫描 →</a>
+          <p>准备好自己的评论 CSV 后，可到评论工作台进行本地统计与对比。</p>
+          <SiteLink href="/crossborder/workbench/voice-insight/">分析自己的评论 →</SiteLink>
         </div>
       </section>
       <SiteFooter />

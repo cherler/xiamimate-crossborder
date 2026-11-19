@@ -1,4 +1,7 @@
 "use client";
+import {sitePath} from "../../../../lib/site";
+import { SiteLink } from "../../../site-link";
+
 
 /**
  * 进口到岸成本估算器。
@@ -9,10 +12,8 @@
  */
 
 import { useMemo, useState } from "react";
-import { AI_ENABLED } from "../../../../lib/api";
-import { AlertTriangle, Calculator, Globe2, Info, Plus, Sparkles, Trash2 } from "lucide-react";
+import { AlertTriangle, Calculator, Globe2, Info, Plus, Trash2 } from "lucide-react";
 import { ToolPageShell, NumberField, SelectField, Assumption, money, useToolImport } from "../tool-kit";
-import { ImportDrawer } from "../import-drawer";
 import { defaultModel, readProductModel, writeProductModel } from "../../../../lib/crossborder/product-model";
 import {
   ResultActions, HistoryStrip, useToolHistory, useSharedInitial, type ToolValues,
@@ -22,7 +23,7 @@ import {
   compareLanded, detectLandedIssues, type Incoterm, type LandedFee, type LandedInput,
 } from "../../../../lib/crossborder/landed-model";
 
-const IMPORT_SAMPLE = "这批货 500 件，单价 50 元，国际运费 4000 元，保险 300 元，清关费 800 元，汇率 0.14，关税 5%，VAT 20%。";
+
 
 const INCOTERM_KEYS = Object.keys(INCOTERMS) as Incoterm[];
 
@@ -142,9 +143,7 @@ export function LandedCalculator() {
 
   return (
     <>
-      <ToolPageShell activeId="landed" headerAction={
-        <button className="import-btn" onClick={() => imp.setOpen(true)} disabled={!AI_ENABLED}><Sparkles size={15} /> {AI_ENABLED ? "智能读取资料" : "智能读取 · 即将上线"}</button>
-      }>
+      <ToolPageShell activeId="landed">
         <section className="param-col">
           <div className="section-heading"><span><Globe2 size={15} /> 货物与批次</span><em>{isDemo && <i className="demo-chip">示例数据</i>}<button type="button" className="ph-clear" onClick={clearParams}>清空参数</button>手动填写 · 实时计算</em></div>
           <div className="field-grid">
@@ -178,7 +177,7 @@ export function LandedCalculator() {
             <span>
               税率请自行查询填写，本工具不代查：
               {TARIFF_SOURCES.map((s, i) => (
-                <span key={s.region}>{i > 0 && "、"}<a href={s.url} target="_blank" rel="noopener noreferrer">{s.region} {s.name}</a></span>
+                <span key={s.region}>{i > 0 && "、"}<SiteLink href={s.url} target="_blank" rel="noopener noreferrer">{s.region} {s.name}</SiteLink></span>
               ))}
               。<b>HS 归类是判断题</b>，同一商品按材质 / 用途可归到不同编码、税率差数倍，请以报关行与目的国海关裁定为准。
             </span>
@@ -312,7 +311,7 @@ export function LandedCalculator() {
                 if (!ok) return;
                 const m = readProductModel() ?? defaultModel();
                 writeProductModel({ ...m, cost: perUnit, domestic: 0, head: 0, updatedAt: Date.now() });
-                window.location.href = "/crossborder/tools/profit-calculator";
+                window.location.assign(sitePath("/crossborder/tools/profit-calculator/"));
               }}>
                 填入利润计算器 →
               </button>
@@ -327,7 +326,7 @@ export function LandedCalculator() {
             <p>
               <b>单件到岸 {money(r.perUnitLanded)} 就是可以填进利润计算器「采购成本」的那个数</b>（它已含运保费与税，填入后其余物流项请勿重复填写）。
               目标售价 = 单件到岸 ÷ (1 − 目标净利率)，<b>未扣平台佣金与广告</b>，适用于自有渠道 / 线下；
-              平台售价请用 <a href="/crossborder/tools/pricing-calculator">定价决策模拟器</a>，两者口径不同。
+              平台售价请用 <SiteLink href="/crossborder/tools/pricing-calculator">定价决策模拟器</SiteLink>，两者口径不同。
             </p>
           </div>
 
@@ -393,9 +392,6 @@ export function LandedCalculator() {
 
         </section>
       </ToolPageShell>
-
-      <ImportDrawer toolId="landed" open={imp.open} sampleText={IMPORT_SAMPLE}
-        onClose={() => imp.setOpen(false)} onConfirm={imp.applyImport} />
     </>
   );
 }

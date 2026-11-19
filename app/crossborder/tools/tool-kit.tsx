@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../site-link";
+
 
 /**
  * 跨境工具页的共享骨架与表单小组件。
@@ -258,7 +260,7 @@ export function ToolPageShell({ activeId, headerAction, children }: {
       <SiteHeader active="crossborder" />
 
       <section className="tool-page">
-        <a className="tool-breadcrumb" href="/crossborder"><ArrowLeft size={13} /> 虾米跨境</a>
+        <SiteLink className="tool-breadcrumb" href="/crossborder"><ArrowLeft size={13} /> 虾米跨境</SiteLink>
         <div className="tool-page-head">
           <div className="tool-page-title">
             <span className="tool-page-icon"><Icon size={22} /></span>
@@ -275,7 +277,7 @@ export function ToolPageShell({ activeId, headerAction, children }: {
           <span>其他工具</span>
           {others.map((t) => (
             t.status === "available"
-              ? <a key={t.id} className="tool-pill" href={`/crossborder/tools/${t.slug}`}>{t.name}</a>
+              ? <SiteLink key={t.id} className="tool-pill" href={`/crossborder/tools/${t.slug}`}>{t.name}</SiteLink>
               : <span key={t.id} className="tool-pill is-locked">{t.name} · 迁移中</span>
           ))}
         </div>

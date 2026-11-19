@@ -1,4 +1,6 @@
 "use client";
+import { SiteLink } from "../../site-link";
+
 
 /**
  * 跨境基础 Wiki —— 新手向常青词条,账本式排版。
@@ -25,7 +27,7 @@ function Entry({ e }: { e: WikiEntry }) {
           <div className="wk-tools">
             <span>上手算它:</span>
             {e.tools.map((t) => (
-              <a key={t.href} href={t.href}>{t.name} <ArrowRight size={12} /></a>
+              <SiteLink key={t.href} href={t.href}>{t.name} <ArrowRight size={12} /></SiteLink>
             ))}
           </div>
         )}
@@ -55,7 +57,7 @@ export function WikiPage() {
     <div className="page-col">
       <SiteHeader active="crossborder" />
       <main className="wk-wrap">
-        <a className="tool-breadcrumb" href="/crossborder"><ArrowLeft size={13} /> 虾米跨境</a>
+        <SiteLink className="tool-breadcrumb" href="/crossborder"><ArrowLeft size={13} /> 虾米跨境</SiteLink>
 
         <div className="wk-head">
           <span className="my-kicker"><BookOpen size={13} /> 跨境基础</span>
@@ -74,7 +76,7 @@ export function WikiPage() {
           {!q && (
             <nav className="wk-toc" aria-label="分组导航">
               {WIKI_GROUPS.map((g) => (
-                <a key={g.key} href={`#g-${g.key}`}>{g.title}<em>{g.entries.length}</em></a>
+                <SiteLink key={g.key} href={`#g-${g.key}`}>{g.title}<em>{g.entries.length}</em></SiteLink>
               ))}
             </nav>
           )}
@@ -93,7 +95,7 @@ export function WikiPage() {
 
         <p className="wk-foot">
           这份基础只求「不带错路」,不求全 —— 具体费率、政策、平台规则永远以官方当期文件为准。
-          学完一个词,最好的巩固是<a href="/crossborder">拿工具算一遍</a>。
+          学完一个词,最好的巩固是<SiteLink href="/crossborder">拿工具算一遍</SiteLink>。
         </p>
       </main>
       <SiteFooter />
